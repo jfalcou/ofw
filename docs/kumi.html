@@ -6,36 +6,40 @@
   SPDX-License-Identifier: MIT
  -->
  <meta charset="utf-8" lang="en"><style class="fallback">body{visibility:hidden;}</style>
-                            **OFW**
-                    *One File Wonders Library*
+                            **KUMI**
+                    *Compact Tuple Tools*
 
-# Objectives
-**OFW** is a loose collection of One File C++20 library solving various problems in, we hope, an
-interesting way by using moden C++ 20.
+# Requirements
+**KUMI** requires a C++20 conformant compiler.
+It is currently tested on latest MSVC, g++ 10.2 and clang++ 10.
 
-## Contents
-Currently, the libraries' roaster is made of:
+# Installation and Usage
+Installing **KUMI** is rather straight forward.
 
-![[**Raberu**](raberu.html) - A Python-like keyword library](raberu.png width="64px") ![[**Kumi**](kumi.html) - A flexible tuple implementation](kumi.png width="64px")
-
-## Installation and Usage
-Installing a library from **OFW** is rather straight forward.
-
-  1. Download the one header file for the library. For example, you can download
-     [**kumi**](kumi.md.html) this way:
+  1. Download the one header file `KUMI.hpp` :
      ```
      wget https://raw.githubusercontent.com/jfalcou/ofw/main/include/kumi.hpp
      ```
-
   2. Copy it in the location of your choice.
 
-Using the library then boils down to including its include files and compile your applciations
-using C++20.
+Using **KUMI** boils down to including `kumi.hpp` and compile using C++20.
+
+<script type="preformatted">
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bash
+g++ my_app.cpp -I/path/to/kumi -std=c++20
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</script>
+
+If you want to contribute to **KUMI**, you can clone this repository or fork it.
+
+# Quick Start
+**KUMI** is a fast-to-compile implementation of tuple based on Jorg Berson
+initial idea. It also provides algorithms and other helpers.
 
 # License
 This library is licensed under the MIT License as specified in the LICENSE.md file.
-If you use any One File Wonders in your project or product, feel free to send us
-an email so we can advertise it here.
+If you use KUMI in your project or product, feel free to send us an email so we can
+advertise it here.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The MIT License (MIT)
