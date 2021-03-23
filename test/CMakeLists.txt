@@ -1,8 +1,6 @@
 ##==================================================================================================
-##  RABERU - Fancy Parameters Library
-##  Copyright 2020 Joel FALCOU
-##
-##  Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+##  OFW - One File Wonders
+##  Copyright : OFW Contributors & Maintainers
 ##  SPDX-License-Identifier: MIT
 ##==================================================================================================
 

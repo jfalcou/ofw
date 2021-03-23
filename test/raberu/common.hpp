@@ -1,9 +1,7 @@
 //==================================================================================================
 /**
   RABERU - Fancy Parameters Library
-  Copyright 2020 Joel FALCOU
-
-  Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+  Copyright : RABERU Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================
@@ -32,4 +30,3 @@ inline constexpr auto value_  = ::rbr::keyword<float>;
 inline constexpr auto name_   = ::rbr::keyword<std::string>;
 inline constexpr auto factor_ = ::rbr::keyword<int>;
 inline constexpr auto ref_    = ::rbr::keyword<double>;
-

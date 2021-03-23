@@ -1,8 +1,6 @@
 ##==================================================================================================
 ##  OFW - One File Wonders
-##  Copyright 2020-2021 Joel FALCOU
-##
-##  Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+##  Copyright : OFW Contributors & Maintainers
 ##  SPDX-License-Identifier: MIT
 ##==================================================================================================
 cmake_minimum_required(VERSION 3.2)

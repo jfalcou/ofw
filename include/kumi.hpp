@@ -1,9 +1,7 @@
 //==================================================================================================
 /**
   KUMI - Compact Tuple Tools
-  Copyright 2021 Joel FALCOU
-
-  Licensed under the MIT License <http://opensource.org/licenses/MIT>.
+  Copyright : RABERU Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================
@@ -188,7 +186,9 @@ namespace kumi
     template<typename... Us>
     [[nodiscard]] auto cat(tuple<Us...> const& us) const
     {
-      return [&]<std::size_t... TI, std::size_t... UI>(std::index_sequence<TI...>, std::index_sequence<UI...>)
+      return [&]<std::size_t... TI, std::size_t... UI>( std::index_sequence<TI...>
+                                                      , std::index_sequence<UI...>
+                                                      )
       {
         return tuple<Ts...,Us...>{ get<TI>(*this)..., get<UI>(us)...};
       }( std::index_sequence_for<Ts...>{}, std::index_sequence_for<Us...>{});
