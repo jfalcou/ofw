@@ -59,10 +59,14 @@ namespace rbr
     }
 
     // Don't relink already linked values
-    template<typename Key, typename C> constexpr auto link(linked_value<C>&& v) noexcept
-    {
-      return std::forward<linked_value<C>>(v);
-    }
+    template<typename Key, typename C>
+    constexpr decltype(auto) link(linked_value<C>& v) noexcept { return v; }
+
+    template<typename Key, typename C>
+    constexpr decltype(auto) link(linked_value<C> const& v) noexcept { return v; }
+
+    template<typename Key, typename C>
+    constexpr auto link(linked_value<C> && v) noexcept { return v; }
 
     // Type notifying that we can't find a given key
     struct unknown_key { template<typename... T> unknown_key(T&&...) {} };
