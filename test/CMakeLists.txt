@@ -7,11 +7,19 @@
 ##==================================================================================================
 ## Compiler options
 ##==================================================================================================
-if( MSVC )
-  set( options /std:c++latest /W3 /EHsc )
+add_library(ofw_test INTERFACE)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_options( ofw_test INTERFACE /W3 /EHsc /std:c++latest)
 else()
-  set( options -std=c++20 -Wall -Wunused-parameter -Werror)
+  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra)
 endif()
+
+target_include_directories( ofw_test INTERFACE
+                            ${tts_SOURCE_DIR}/include
+                            ${PROJECT_SOURCE_DIR}/test
+                            ${PROJECT_SOURCE_DIR}/include
+                          )
 
 ##==================================================================================================
 ## Setup TTS
@@ -37,7 +45,7 @@ function(generate_test root file)
   set(test "${root}.${base}")
 
   add_executable( ${test}  "${file}")
-  target_compile_options  ( ${test} PUBLIC ${options} )
+  target_link_libraries(${test} PUBLIC ofw_test)
 
   set_property( TARGET ${test}
                 PROPERTY RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/unit"
