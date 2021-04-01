@@ -4,4 +4,8 @@
 ##  SPDX-License-Identifier: MIT
 ##==================================================================================================
 
-## generate_test("kumi" "contains.cpp")
+generate_test("kumi"  "construction.cpp")
+generate_test("kumi"  "access.cpp"      )
+generate_test("kumi"  "apply.cpp"       )
+generate_test("kumi"  "map.cpp"         )
+generate_test("kumi"  "split.cpp"       )

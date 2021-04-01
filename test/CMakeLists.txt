@@ -12,7 +12,7 @@ add_library(ofw_test INTERFACE)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options( ofw_test INTERFACE /W3 /EHsc /std:c++latest)
 else()
-  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra)
+  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra )
 endif()
 
 target_include_directories( ofw_test INTERFACE
@@ -84,4 +84,5 @@ add_custom_target(unit)
 ##==================================================================================================
 ## Actual tests
 ##==================================================================================================
+add_subdirectory(kumi)
 add_subdirectory(raberu)
