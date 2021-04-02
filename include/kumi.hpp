@@ -189,7 +189,7 @@ namespace kumi
       }( std::index_sequence_for<Ts...>{}, std::index_sequence_for<Us...>{});
     }
 
-    template< product_type... Tuples> [[nodiscard]] constexpr auto cat(Tuples const&... ts )
+    template< product_type... Tuples> [[nodiscard]] constexpr auto cat(Tuples const&... ts ) const
     {
       auto const cc = [](auto const& a, auto const& b) { return a.cat(b); };
       return (detail::foldable{cc,*this} >> ... >> detail::foldable{cc,ts}).value;
@@ -391,6 +391,18 @@ namespace kumi
   [[nodiscard]] constexpr auto map(Function f, Arg0 arg0, Args const&... others)
   {
     return arg0.map(f, others...);
+  }
+
+  template<product_type Head, product_type... Tail>
+  [[nodiscard]] constexpr auto cat(Head const& h, Tail const&... ts )
+  {
+    return h.cat(ts...);
+  }
+
+  template<product_type T1, product_type T2>
+  [[nodiscard]] constexpr auto operator|(T1&& t1, T2&& t2)
+  {
+    return std::forward<T1>(t1).cat(std::forward<T2>(t2));
   }
 }
 

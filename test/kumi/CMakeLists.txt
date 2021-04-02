@@ -4,11 +4,12 @@
 ##  SPDX-License-Identifier: MIT
 ##==================================================================================================
 
-generate_test("kumi"  "aggregate_ctor.cpp")
-generate_test("kumi"  "make_tuple.cpp")
-generate_test("kumi"  "tie.cpp")
+generate_test("kumi"  "access.cpp"          )
+generate_test("kumi"  "aggregate_ctor.cpp"  )
+generate_test("kumi"  "apply.cpp"           )
+generate_test("kumi"  "cat.cpp"             )
 generate_test("kumi"  "forward_as_tuple.cpp")
-generate_test("kumi"  "access.cpp"      )
-generate_test("kumi"  "apply.cpp"       )
-generate_test("kumi"  "map.cpp"         )
-generate_test("kumi"  "split.cpp"       )
+generate_test("kumi"  "make_tuple.cpp"      )
+generate_test("kumi"  "map.cpp"             )
+generate_test("kumi"  "split.cpp"           )
+generate_test("kumi"  "tie.cpp"             )
