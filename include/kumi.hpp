@@ -14,7 +14,8 @@ namespace kumi
   //================================================================================================
   // Constant integers
   //================================================================================================
-  template<std::size_t N> struct index  { static constexpr auto value = N; };
+  template<std::size_t N> struct index_t  { static constexpr auto value = N; };
+  template<std::size_t N> inline constexpr index_t<N> const index = {};
 
   //================================================================================================
   // UDL for constant indexing like 42_c
@@ -27,7 +28,7 @@ namespace kumi
       ((value = value*10 + (c - '0')),...);
       return value;
     }
-    template<char ...c> constexpr auto operator"" _c() noexcept { return index<b10<c...>()>{}; }
+    template<char ...c> constexpr auto operator"" _c() noexcept { return index<b10<c...>()>; }
   }
 
   //================================================================================================
@@ -113,20 +114,14 @@ namespace kumi
     //==============================================================================================
     // Access
     //==============================================================================================
-    template<std::size_t I>
-    constexpr decltype(auto) operator[](index<I>) noexcept requires(I<sizeof...(Ts))
+    template<std::size_t I> requires(I<sizeof...(Ts))
+    constexpr decltype(auto) operator[](index_t<I>) noexcept
     {
       return detail::get_leaf<I>(impl);
     }
 
-    template<std::size_t I>
-    constexpr decltype(auto) operator[](index<I>) const noexcept requires(I<sizeof...(Ts))
-    {
-      return detail::get_leaf<I>(impl);
-    }
-
-    template<std::size_t I>
-    constexpr auto grab(index<I>) const noexcept requires(I<sizeof...(Ts))
+    template<std::size_t I> requires(I<sizeof...(Ts))
+    constexpr decltype(auto) operator[](index_t<I>) const noexcept
     {
       return detail::get_leaf<I>(impl);
     }
@@ -201,52 +196,52 @@ namespace kumi
     }
 
     template<std::size_t I0, std::size_t I1>
-    [[nodiscard]] constexpr auto extract( index<I0> const&, index<I1> const&) const noexcept
     requires((I1-I0) <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto extract( index_t<I0> const&, index_t<I1> const&) const noexcept
     {
       return [&]<std::size_t... N>(std::index_sequence<N...>)
       {
-        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>{}]... };
+        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>]... };
       }( std::make_index_sequence<I1-I0>() );
     }
 
     template<std::size_t I0, std::size_t I1>
-    [[nodiscard]] constexpr auto extract( index<I0> const&, index<I1> const&) noexcept
     requires((I1-I0) <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto extract( index_t<I0> const&, index_t<I1> const&) noexcept
     {
       return [&]<std::size_t... N>(std::index_sequence<N...>)
       {
-        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>{}]... };
+        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>]... };
       }( std::make_index_sequence<I1-I0>() );
     }
 
     template<std::size_t I0>
-    [[nodiscard]] constexpr auto extract( index<I0> const&) const noexcept
     requires(I0 <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto extract( index_t<I0> const&) const noexcept
     {
       return [&]<std::size_t... N>(std::index_sequence<N...>)
       {
-        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>{}]... };
+        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>]... };
       }( std::make_index_sequence<sizeof...(Ts)-I0>() );
     }
 
     template<std::size_t I0>
-    [[nodiscard]] constexpr auto extract( index<I0> const&) noexcept
     requires(I0 <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto extract( index_t<I0> const&) noexcept
     {
       return [&]<std::size_t... N>(std::index_sequence<N...>)
       {
-        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>{}]... };
+        return tuple<std::tuple_element_t<N+I0,tuple>...>{ (*this)[index<N+I0>]... };
       }( std::make_index_sequence<sizeof...(Ts)-I0>() );
     }
 
     template<std::size_t I0>
-    [[nodiscard]] constexpr auto split( index<I0> const&) const noexcept
-    requires(I0 <= sizeof...(Ts));
+    requires(I0 <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto split( index_t<I0> const&) const noexcept;
 
     template<std::size_t I0>
-    [[nodiscard]] constexpr auto split( index<I0> const&)  noexcept
-    requires(I0 <= sizeof...(Ts));
+    requires(I0 <= sizeof...(Ts))
+    [[nodiscard]] constexpr auto split( index_t<I0> const&)  noexcept;
 
     //==============================================================================================
     // Informations on tuple
@@ -257,8 +252,8 @@ namespace kumi
     // Assignment
     //==============================================================================================
     template<typename... Us>
-    constexpr tuple& operator=(tuple<Us...> const& other) &
     requires( detail::piecewise_assignable<tuple,tuple<Us...>> )
+    constexpr tuple& operator=(tuple<Us...> const& other) &
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
       {
@@ -269,8 +264,8 @@ namespace kumi
     }
 
     template<typename... Us>
-    constexpr tuple& operator=(tuple<Us...> && other) &
     requires( detail::piecewise_assignable<tuple,tuple<Us...>> )
+    constexpr tuple& operator=(tuple<Us...> && other) &
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
       {
@@ -289,6 +284,15 @@ namespace kumi
       return [&]<std::size_t... I>(std::index_sequence<I...>)
       {
         return ((detail::get_leaf<I>(self.impl) == detail::get_leaf<I>(other.impl)) && ...);
+      }(std::make_index_sequence<sizeof...(Ts)>());
+    }
+
+    template<sized_product_type<sizeof...(Ts)> Other>
+    friend constexpr bool operator!=(tuple const& self, Other const& other) noexcept
+    {
+      return [&]<std::size_t... I>(std::index_sequence<I...>)
+      {
+        return ((detail::get_leaf<I>(self.impl) != detail::get_leaf<I>(other.impl)) || ...);
       }(std::make_index_sequence<sizeof...(Ts)>());
     }
 
@@ -311,10 +315,22 @@ namespace kumi
   template <typename... Ts> tuple(Ts&&...) -> tuple<std::remove_cvref_t<Ts>...>;
 
   template <typename... Ts>
-  [[nodiscard]] constexpr tuple<Ts&...> tie(Ts&... ts)          { return {ts...}; }
+  [[nodiscard]] constexpr tuple<Ts&...> tie(Ts&... ts)
+  {
+    return {ts...};
+  }
 
   template <typename... Ts>
-  [[nodiscard]] constexpr tuple<Ts...>  make_tuple(Ts&&... ts)  { return {std::forward<Ts>(ts)...}; }
+  [[nodiscard]] constexpr tuple<Ts&&...> forward_as_tuple(Ts&&... ts)
+  {
+    return {std::forward<Ts>(ts)...};
+  }
+
+  template <typename... Ts>
+  [[nodiscard]] constexpr tuple<std::unwrap_ref_decay_t<Ts>...>  make_tuple(Ts&&... ts)
+  {
+    return {std::forward<Ts>(ts)...};
+  }
 
   //================================================================================================
   // Implementation depending on make_tuple/tie
@@ -325,44 +341,46 @@ namespace kumi
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
-      auto call = [&]<std::size_t N>(index<N>, auto const&... args)
+      auto call = [&]<std::size_t N>(index_t<N>, auto const&... args)
                   {
                     return f(detail::get_leaf<N>(args.impl)...);
                   };
 
-      return  make_tuple( call( index<I>{}, *this, others...)...);
+      return  make_tuple( call( index<I>, *this, others...)...);
     }(std::make_index_sequence<sizeof...(Ts)>());
   }
 
   template<typename... Ts>
   template<std::size_t I0>
-  [[nodiscard]] constexpr auto tuple<Ts...>::split( index<I0> const&) const noexcept
   requires(I0 <= sizeof...(Ts))
+  [[nodiscard]] constexpr auto tuple<Ts...>::split( index_t<I0> const&) const noexcept
   {
-    return kumi::make_tuple(extract(index<0>{},index<I0>{}), extract(index<I0>{}) );
+    return kumi::make_tuple(extract(index<0>,index<I0>), extract(index<I0>) );
   }
 
   template<typename... Ts>
   template<std::size_t I0>
-  [[nodiscard]] constexpr auto tuple<Ts...>::split( index<I0> const&)  noexcept
   requires(I0 <= sizeof...(Ts))
+  [[nodiscard]] constexpr auto tuple<Ts...>::split( index_t<I0> const&)  noexcept
   {
-    return kumi::make_tuple(extract(index<0>{},index<I0>{}), extract(index<I0>{}) );
+    return kumi::make_tuple(extract(index<0>,index<I0>), extract(index<I0>) );
   }
 
   //================================================================================================
   // Access
   //================================================================================================
   template<std::size_t I, typename... Ts>
-  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...>& arg) noexcept requires( I<sizeof...(Ts) )
+  requires( I<sizeof...(Ts) )
+  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...>& arg) noexcept
   {
-    return arg[index<I>{}];
+    return arg[index<I>];
   }
 
   template<std::size_t I, typename... Ts>
-  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...> const& arg)  noexcept requires(I<sizeof...(Ts))
+  requires(I<sizeof...(Ts))
+  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...> const& arg) noexcept
   {
-    return arg[index<I>{}];
+    return arg[index<I>];
   }
 
   //================================================================================================
@@ -381,10 +399,15 @@ namespace kumi
 //==================================================================================================
 namespace std
 {
-  template<std::size_t I, typename... Ts>
-  struct  tuple_element<I, kumi::tuple<Ts...>>
+  template<std::size_t I, typename Head, typename... Tail>
+  struct  tuple_element<I, kumi::tuple<Head, Tail...>>
+        : tuple_element<I-1,kumi::tuple<Tail...>>
+  {};
+
+  template<typename Head, typename... Tail>
+  struct  tuple_element<0, kumi::tuple<Head, Tail...>>
   {
-    using type = decltype(declval<kumi::tuple<Ts...>>().grab(kumi::index<I>{}));
+    using type = Head;
   };
 
   template<typename... Ts>
