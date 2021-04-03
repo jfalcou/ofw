@@ -1,8 +1,8 @@
-# OFW - One File Wonders
+# OFW - One File Wonders 
 
-[![OFW CI](https://github.com/jfalcou/ofw/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/jfalcou/ofw/actions/workflows/main.yml)
-
-[Join the discussion on Discord](https://discord.gg/y54zPWwAGt)
+[![OFW CI](https://github.com/jfalcou/ofw/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/jfalcou/ofw/actions/workflows/main.yml) 
+[![Licence](https://img.shields.io/github/license/jfalcou/ofw?style=plastic)](https://img.shields.io/github/license/jfalcou/ofw?style=plastic) 
+[![Discord](https://img.shields.io/discord/692734675726237696?style=plastic)](https://discord.com/channels/692734675726237696/828012535361830942) 
 
 ## WTF is OFW
 
@@ -43,7 +43,6 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -55,4 +54,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
