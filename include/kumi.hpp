@@ -192,7 +192,7 @@ namespace kumi
     template< product_type... Tuples> [[nodiscard]] constexpr auto cat(Tuples const&... ts ) const
     {
       auto const cc = [](auto const& a, auto const& b) { return a.cat(b); };
-      return (detail::foldable{cc,*this} >> ... >> detail::foldable{cc,ts}).value;
+      return (detail::foldable{cc,*this} << ... << detail::foldable{cc,ts}).value;
     }
 
     template<std::size_t I0, std::size_t I1>
