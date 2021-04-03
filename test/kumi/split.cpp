@@ -8,7 +8,6 @@
 #define TTS_MAIN
 #include <tts/tts.hpp>
 #include <kumi.hpp>
-#include <string>
 
 TTS_CASE("Check tuple::split behavior")
 {
