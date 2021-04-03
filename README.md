@@ -2,6 +2,8 @@
 
 [![OFW CI](https://github.com/jfalcou/ofw/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/jfalcou/ofw/actions/workflows/main.yml)
 
+[Join the discussion on Discord](https://discord.gg/y54zPWwAGt)
+
 ## WTF is OFW
 
 **OFW** is a loose collection of One File C++20 library solving various problems in, we hope, an interesting way by using modern C++ 20.
