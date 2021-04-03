@@ -27,13 +27,15 @@ TTS_CASE("Check settings(...).contains behavior")
 TTS_CASE("Check settings(...).contains constexpr behavior")
 {
   using namespace std::literals;
+  using namespace rbr::literal;
 
-  rbr::settings values(custom_ = foo{}, name_ = "john"s, value_ = 3.f);
+  constexpr rbr::settings values("custom"_kw = foo{}, name_ = 88, value_ = 3.f);
 
-  TTS_EXPECT    ( bool_<values.contains(custom_)>::value            );
-  TTS_EXPECT    ( bool_<values.contains(name_)  >::value            );
-  TTS_EXPECT    ( bool_<values.contains(value_) >::value            );
-  TTS_EXPECT_NOT( bool_<values.contains(rbr::keyword<char>) >::value);
-  TTS_EXPECT_NOT( bool_<values.contains(rbr::keyword<short>)>::value);
-  TTS_EXPECT_NOT( bool_<values.contains(rbr::keyword<void*>)>::value);
+  TTS_CONSTEXPR_EXPECT( values.contains("custom"_kw));
+  TTS_CONSTEXPR_EXPECT( values.contains(name_)      );
+  TTS_CONSTEXPR_EXPECT( values.contains(value_)     );
+
+  TTS_CONSTEXPR_EXPECT_NOT( values.contains(rbr::keyword<char>) );
+  TTS_CONSTEXPR_EXPECT_NOT( values.contains(rbr::keyword<short>));
+  TTS_CONSTEXPR_EXPECT_NOT( values.contains(rbr::keyword<void*>));
 }

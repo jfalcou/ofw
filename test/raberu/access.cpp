@@ -37,8 +37,8 @@ TTS_CASE("Check settings(...) operator[t] constexpr behavior")
 {
   constexpr auto values = rbr::settings( coord_ = 75ULL, 42.69f );
 
-  TTS_EXPECT( bool_<values[rbr::keyword<float>] == 42.69f>::value );
-  TTS_EXPECT( bool_<values[coord_             ] == 75ULL >::value );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<float>], 42.69f);
+  TTS_CONSTEXPR_EQUAL(values[coord_             ], 75ULL );
 }
 
 TTS_CASE("Check settings(...) operator[t | v] behavior")
@@ -72,10 +72,10 @@ TTS_CASE("Check settings(...) operator[t | v] constexpr behavior")
 {
   constexpr auto values = rbr::settings( coord_ = 75ULL );
 
-  TTS_EXPECT( bool_<values[rbr::keyword<char>  | -99] == -99   >::value );
-  TTS_EXPECT( bool_<values[rbr::keyword<int>   | -99] == -99   >::value );
-  TTS_EXPECT( bool_<values[rbr::keyword<float> | -99] == -99   >::value );
-  TTS_EXPECT( bool_<values[coord_              | -99] == 75ULL >::value );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<char>  | -99], -99  );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<int>   | -99], -99  );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<float> | -99], -99  );
+  TTS_CONSTEXPR_EQUAL(values[coord_              | -99], 75ULL);
 }
 
 TTS_CASE("Check settings(...) operator[t | func()] behavior")
@@ -94,8 +94,8 @@ TTS_CASE("Check settings(...) operator[t | func()] constexpr behavior")
   constexpr auto values = rbr::settings(value_ = 1337.42f);
   auto or_else = []<typename T>(rbr::keyword_type<T>) { return 42.69; };
 
-  TTS_EXPECT( bool_<values[rbr::keyword<char>   | or_else ] == 42.69    >::value );
-  TTS_EXPECT( bool_<values[rbr::keyword<double> | or_else ] == 42.69    >::value );
-  TTS_EXPECT( bool_<values[value_               | or_else ] == 1337.42f >::value );
-  TTS_EXPECT( bool_<values[custom_              | or_else ] == 42.69    >::value );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<char>   | or_else ], 42.69   );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<double> | or_else ], 42.69   );
+  TTS_CONSTEXPR_EQUAL(values[value_               | or_else ], 1337.42f);
+  TTS_CONSTEXPR_EQUAL(values[custom_              | or_else ], 42.69   );
 }

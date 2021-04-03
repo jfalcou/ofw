@@ -38,12 +38,12 @@ TTS_CASE("Check settings(...) as function interface with named parameters")
 
 TTS_CASE("Check settings(...) as constexpr function interface with simple parameters")
 {
-  TTS_EXPECT( bool_< typed_interface(10  , 3.41) == 34.1>::value );
-  TTS_EXPECT( bool_< typed_interface(3.41, 10  ) == 34.1>::value );
+  TTS_CONSTEXPR_EQUAL(typed_interface(10  , 3.41), 34.1 );
+  TTS_CONSTEXPR_EQUAL(typed_interface(3.41, 10  ), 34.1 );
 }
 
 TTS_CASE("Check settings(...) as constexpr function interface with named parameters")
 {
-  TTS_EXPECT( bool_< named_interface( factor_ = 10  , ref_    = 3.41 ) == 34.1>::value );
-  TTS_EXPECT( bool_< named_interface( ref_    = 3.41, factor_ = 10   ) == 34.1>::value );
+  TTS_CONSTEXPR_EQUAL(named_interface( factor_ = 10  , ref_    = 3.41 ), 34.1 );
+  TTS_CONSTEXPR_EQUAL(named_interface( ref_    = 3.41, factor_ = 10   ), 34.1 );
 }
