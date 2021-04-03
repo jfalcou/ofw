@@ -1,7 +1,7 @@
 //==================================================================================================
 /**
   RABERU - Fancy Parameters Library
-  Copyright : RABERU Contributors & Maintainers
+  Copyright : OFW Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================
@@ -64,7 +64,7 @@ namespace rbr
     constexpr decltype(auto) link(linked_value<C> const& v) noexcept { return v; }
 
     template<typename Key, typename C>
-    constexpr auto link(linked_value<C> && v) noexcept { return v; }
+    constexpr auto link(linked_value<C> && v) noexcept { return std::move(v); }
 
     // Type notifying that we can't find a given key
     struct unknown_key { template<typename... T> unknown_key(T&&...) {} };

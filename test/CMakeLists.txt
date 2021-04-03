@@ -12,7 +12,11 @@ add_library(ofw_test INTERFACE)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options( ofw_test INTERFACE /W3 /EHsc /std:c++latest)
 else()
-  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra )
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra -Wno-missing-braces -Wno-gnu-string-literal-operator-template)
+  else()
+  target_compile_options( ofw_test INTERFACE -std=c++20 -Werror -Wall -Wextra)
+  endif()
 endif()
 
 target_include_directories( ofw_test INTERFACE
