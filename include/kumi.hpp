@@ -1,7 +1,7 @@
 //==================================================================================================
 /**
   KUMI - Compact Tuple Tools
-  Copyright : RABERU Contributors & Maintainers
+  Copyright : OFW Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================

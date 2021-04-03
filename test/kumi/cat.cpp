@@ -26,16 +26,21 @@ TTS_CASE("Check tuple::cat behavior")
 TTS_CASE("Check cat(tuple) behavior")
 {
   short s = 55;
-  TTS_EQUAL ( cat(kumi::tuple{     }, kumi::tuple{1,2.})    ) , (kumi::tuple{1,2.})       );
-  TTS_EQUAL ( cat(kumi::tuple{1    }, kumi::tuple{2.,3.f,4})) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_EQUAL ( cat(kumi::tuple{1,2. }, kumi::tuple{3.f,4})   ) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_EQUAL ( cat(kumi::tuple{1,2. }, kumi::tuple{3.f,4}, kumi::tuple{s,6.7}))
+  TTS_EQUAL ( (cat(kumi::tuple{     }, kumi::tuple{1,2.})    ) , (kumi::tuple{1,2.})       );
+  TTS_EQUAL ( (cat(kumi::tuple{1    }, kumi::tuple{2.,3.f,4})) , (kumi::tuple{1,2.,3.f,4}) );
+  TTS_EQUAL ( (cat(kumi::tuple{1,2. }, kumi::tuple{3.f,4})   ) , (kumi::tuple{1,2.,3.f,4}) );
+  TTS_EQUAL ( (cat(kumi::tuple{1,2. }, kumi::tuple{3.f,4}, kumi::tuple{s,6.7}))
             , (kumi::tuple{1,2.,3.f,4,s,6.7})
             );
 }
 
-/*
-  TTS_EQUAL( cat(t0,t1,t2)  , ref);
-  TTS_EQUAL( (t0 | t1 | t2) , ref);
-
-*/
+TTS_CASE("Check t0 | ... | t1 behavior")
+{
+  short s = 55;
+  TTS_EQUAL ( (kumi::tuple{} | kumi::tuple{1,2.})         , (kumi::tuple{1,2.})       );
+  TTS_EQUAL ( (kumi::tuple{1    } | kumi::tuple{2.,3.f,4}), (kumi::tuple{1,2.,3.f,4}) );
+  TTS_EQUAL ( (kumi::tuple{1,2. } | kumi::tuple{3.f,4})   , (kumi::tuple{1,2.,3.f,4}) );
+  TTS_EQUAL ( (kumi::tuple{1,2. } | kumi::tuple{3.f,4} | kumi::tuple{s,6.7})
+            , (kumi::tuple{1,2.,3.f,4,s,6.7})
+            );
+}
