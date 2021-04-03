@@ -10,7 +10,7 @@
 Currently, the libraries' roaster is made of:
 
 * [**Raberu**](https://github.com/jfalcou/ofw/wiki/RABERU) - A Python-like keyword library
-* [**Kumi**](kumi.html) - A flexible tuple implementation
+* [**Kumi**](https://github.com/jfalcou/ofw/wiki/KUMI) - A flexible tuple implementation
 
 ## Installation and Usage
 Installing a library from **OFW** is rather straightforward.
