@@ -81,7 +81,7 @@ namespace kumi
       template<typename W>
       friend constexpr decltype(auto) operator>>(foldable&& x, foldable<F, W>&& y)
       {
-        return detail::foldable{x.func,x.func(x.value, y.value)};
+        return detail::foldable{x.func,x.func(y.value, x.value)};
       }
 
       template<typename W>
