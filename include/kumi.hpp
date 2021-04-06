@@ -129,8 +129,11 @@ namespace kumi
     //==============================================================================================
     // Algorithms
     //==============================================================================================
-    // Apply f to every elements of the tuple and return a continuation
-    template<typename Function> constexpr tuple& apply(Function f)
+
+    //==============================================================================================
+    //Appyl f to each element of tuple and returns a continuation
+    //==============================================================================================
+    template<typename Function> constexpr decltype(auto) for_each(Function f)
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
       {
@@ -140,7 +143,7 @@ namespace kumi
       return *this;
     }
 
-    template<typename Function> constexpr tuple const& apply(Function f) const
+    template<typename Function> constexpr decltype(auto) for_each(Function f) const
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
       {
@@ -150,12 +153,33 @@ namespace kumi
       return *this;
     }
 
+    //==============================================================================================
+    // Pass every elements of the tuple to f
+    //==============================================================================================
+    template<typename Function> constexpr decltype(auto) apply(Function f)
+    {
+      return [&]<std::size_t... I>(std::index_sequence<I...>)
+      {
+        return f(detail::get_leaf<I>(impl)...);
+      }(std::make_index_sequence<sizeof...(Ts)>());
+    }
+
+    template<typename Function> constexpr decltype(auto) apply(Function f) const
+    {
+      return [&]<std::size_t... I>(std::index_sequence<I...>)
+      {
+        return f(detail::get_leaf<I>(impl)...);
+      }(std::make_index_sequence<sizeof...(Ts)>());
+    }
+
+    //==============================================================================================
     // Construct the tuple made of the application of f to elements of each tuples
+    //==============================================================================================
     template<typename Function, sized_product_type<sizeof...(Ts)>... Tuples>
-    [[nodiscard]] constexpr auto map(Function f, Tuples const&... others) const;
+    constexpr auto map(Function f, Tuples const&... others) const;
 
     template<typename Function, typename Value>
-    [[nodiscard]] constexpr auto fold_right(Function f, Value init) const
+    constexpr auto fold_right(Function f, Value init) const
     {
       return  [&]<std::size_t... I>(std::index_sequence<I...>)
               {
@@ -178,6 +202,9 @@ namespace kumi
               }(std::make_index_sequence<sizeof...(Ts)>());
     }
 
+    //==============================================================================================
+    // Concatenates tuples
+    //==============================================================================================
     template<typename... Us>
     [[nodiscard]] constexpr auto cat(tuple<Us...> const& us) const
     {
@@ -195,6 +222,9 @@ namespace kumi
       return (detail::foldable{cc,*this} << ... << detail::foldable{cc,ts}).value;
     }
 
+    //==============================================================================================
+    // Extract a sub-rage of tuple element
+    //==============================================================================================
     template<std::size_t I0, std::size_t I1>
     requires((I1-I0) <= sizeof...(Ts))
     [[nodiscard]] constexpr auto extract( index_t<I0> const&, index_t<I1> const&) const noexcept
@@ -235,6 +265,9 @@ namespace kumi
       }( std::make_index_sequence<sizeof...(Ts)-I0>() );
     }
 
+    //==============================================================================================
+    // Split a tuple into two tuples based on an index
+    //==============================================================================================
     template<std::size_t I0>
     requires(I0 <= sizeof...(Ts))
     [[nodiscard]] constexpr auto split( index_t<I0> const&) const noexcept;
@@ -302,7 +335,7 @@ namespace kumi
     friend std::ostream& operator<<(std::ostream& os, tuple const& t) noexcept
     {
       os << "( ";
-      t.apply( [&os](auto const& e) { os << e << " "; });
+      t.for_each( [&os](auto const& e) { os << e << " "; });
       os << ")";
 
       return os;
@@ -337,7 +370,7 @@ namespace kumi
   //================================================================================================
   template<typename... Ts>
   template<typename Function, sized_product_type<sizeof...(Ts)>... Tuples>
-  [[nodiscard]] constexpr auto tuple<Ts...>::map(Function f, Tuples const&... others) const
+  constexpr auto tuple<Ts...>::map(Function f, Tuples const&... others) const
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
@@ -386,9 +419,20 @@ namespace kumi
   //================================================================================================
   // Free functions interface
   //================================================================================================
-  // Construct the tuple made of the application of f to elements of each tuples
+  template<typename Function, product_type Tuple>
+  constexpr decltype(auto) apply(Function f, Tuple t)
+  {
+    return t.apply(f);
+  }
+
+  template<typename Function, product_type Tuple>
+  constexpr decltype(auto) for_each(Function f, Tuple t)
+  {
+    return t.for_each(f);
+  }
+
   template<typename Function, product_type Arg0, sized_product_type<Arg0{}.size()>... Args>
-  [[nodiscard]] constexpr auto map(Function f, Arg0 arg0, Args const&... others)
+  constexpr auto map(Function f, Arg0 arg0, Args const&... others)
   {
     return arg0.map(f, others...);
   }
