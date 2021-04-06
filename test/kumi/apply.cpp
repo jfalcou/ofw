@@ -12,14 +12,14 @@
 
 TTS_CASE("Check apply behavior")
 {
-  TTS_EQUAL ( (kumi::tuple{1,'5',"things"}
-                    .apply( [](auto... m)
-                            {
-                              std::ostringstream s;
-                              ((s << m << " "),...);
-                              return s.str();
-                            }
-                          )
+  TTS_EQUAL ( ( kumi::apply ( [](auto... m)
+                              {
+                                std::ostringstream s;
+                                ((s << m << " "),...);
+                                return s.str();
+                              }
+                            , kumi::tuple{1,'5',"things"}
+                            )
               )
             , "1 5 things "
             );
@@ -27,7 +27,12 @@ TTS_CASE("Check apply behavior")
 
 TTS_CASE("Check apply constexpr behavior")
 {
-  TTS_CONSTEXPR_EQUAL ( (kumi::tuple{1,2.3,4.5f,}.apply( [](auto... m) { return (m + ...); }))
-                      , 7.8
-                      );
+  constexpr auto t = []()
+  {
+    auto it = kumi::tuple{1,2.,3.f};
+    return kumi::apply( [](auto... m) { return (m + ...); }, it);
+  }();
+
+  std::cout << t << "\n";
+  TTS_CONSTEXPR_EQUAL(t, 6.);
 }

@@ -9,32 +9,6 @@
 #include <tts/tts.hpp>
 #include <kumi.hpp>
 
-TTS_CASE("Check tuple::cat behavior")
-{
-  short s = 55;
-  TTS_EQUAL ( (kumi::tuple{     }.cat(kumi::tuple{1,2.})    ) , (kumi::tuple{1,2.})       );
-  TTS_EQUAL ( (kumi::tuple{1    }.cat(kumi::tuple{2.,3.f,4})) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_EQUAL ( (kumi::tuple{1,2. }.cat(kumi::tuple{3.f,4})   ) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_EQUAL ( (kumi::tuple{1,2. }.cat( kumi::tuple{3.f,4}
-                                     , kumi::tuple{s,6.7}
-                                     )
-              )                                               , (kumi::tuple{1,2.,3.f,4,s,6.7})
-            );
-}
-
-TTS_CASE("Check tuple::cat constexpr behavior")
-{
-  constexpr short s = 55;
-  TTS_CONSTEXPR_EQUAL ( (kumi::tuple{     }.cat(kumi::tuple{1,2.})    ) , (kumi::tuple{1,2.})       );
-  TTS_CONSTEXPR_EQUAL ( (kumi::tuple{1    }.cat(kumi::tuple{2.,3.f,4})) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_CONSTEXPR_EQUAL ( (kumi::tuple{1,2. }.cat(kumi::tuple{3.f,4})   ) , (kumi::tuple{1,2.,3.f,4}) );
-  TTS_CONSTEXPR_EQUAL ( (kumi::tuple{1,2. }.cat( kumi::tuple{3.f,4}
-                                               , kumi::tuple{s,6.7}
-                                               )
-                        )                                               , (kumi::tuple{1,2.,3.f,4,s,6.7})
-                      );
-}
-
 TTS_CASE("Check cat(tuple) behavior")
 {
   short s = 55;
