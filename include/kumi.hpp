@@ -345,7 +345,7 @@ namespace kumi
   //================================================================================================
   // CTAD and other helpers
   //================================================================================================
-  template <typename... Ts> tuple(Ts&&...) -> tuple<std::remove_cvref_t<Ts>...>;
+  template <typename... Ts> tuple(Ts&&...) -> tuple<std::unwrap_ref_decay_t<Ts>...>;
 
   template <typename... Ts>
   [[nodiscard]] constexpr tuple<Ts&...> tie(Ts&... ts)
