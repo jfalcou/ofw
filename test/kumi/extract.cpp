@@ -11,7 +11,7 @@
 
 TTS_CASE("Check tuple::extract behavior")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   TTS_WHEN("Given a tuple of size 4")
   {
@@ -141,7 +141,7 @@ TTS_CASE("Check tuple::extract behavior")
 
 TTS_CASE("Check tuple::extract constexpr behavior")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   TTS_WHEN("Given a tuple of size 4")
   {

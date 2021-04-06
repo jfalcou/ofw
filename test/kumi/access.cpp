@@ -11,7 +11,7 @@
 
 TTS_CASE("Check access to kumi::tuple via indexing")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   kumi::tuple t1 = {1};
   kumi::tuple t2 = {1.f,2};
@@ -65,7 +65,7 @@ TTS_CASE("Check access to kumi::tuple via indexing")
 
 TTS_CASE("Check constexpr access to kumi::tuple via indexing")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   constexpr kumi::tuple t1 = {1};
   constexpr kumi::tuple t2 = {1.f,2};

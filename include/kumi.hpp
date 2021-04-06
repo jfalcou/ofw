@@ -20,7 +20,7 @@ namespace kumi
   //================================================================================================
   // UDL for constant indexing like 42_c
   //================================================================================================
-  namespace literal
+  namespace literals
   {
     template<char... c> constexpr auto b10()
     {

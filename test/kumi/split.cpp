@@ -11,7 +11,7 @@
 
 TTS_CASE("Check tuple::split behavior")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   TTS_WHEN("Given a tuple of size 8")
   {
@@ -84,7 +84,7 @@ TTS_CASE("Check tuple::split behavior")
 
 TTS_CASE("Check tuple::split constexpr behavior")
 {
-  using namespace kumi::literal;
+  using namespace kumi::literals;
 
   TTS_WHEN("Given a constexpr tuple of size 8")
   {
