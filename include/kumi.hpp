@@ -132,6 +132,14 @@ namespace kumi
     }
 
     //==============================================================================================
+    // Tuple as functional object
+    //==============================================================================================
+    template<typename Function> constexpr decltype(auto) operator()(Function&& f)
+    {
+      return apply(f,*this);
+    }
+
+    //==============================================================================================
     // Extract a sub-rage of tuple element
     //==============================================================================================
     template<std::size_t I0, std::size_t I1>
@@ -312,11 +320,11 @@ namespace kumi
   // Pass every elements of the tuple to f
   //================================================================================================
   template<typename Function, product_type Tuple>
-  constexpr decltype(auto) apply(Function f, Tuple&& t)
+  constexpr decltype(auto) apply(Function&& f, Tuple&& t)
   {
     return  [&]<std::size_t... I>(std::index_sequence<I...>)
             {
-              return f(detail::get_leaf<I>(std::forward<Tuple>(t).impl)...);
+              return std::forward<Function>(f)(detail::get_leaf<I>(std::forward<Tuple>(t).impl)...);
             }(std::make_index_sequence<std::remove_cvref_t<Tuple>::size()>());
   }
 
