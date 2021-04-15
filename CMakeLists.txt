@@ -20,6 +20,14 @@ if (${PROJECT_SOURCE_DIR} STREQUAL ${PROJECT_BINARY_DIR})
 endif()
 
 ##==================================================================================================
+## Install target for people using FetchContent
+##==================================================================================================
+add_library(ofw_lib INTERFACE)
+target_include_directories(ofw_lib INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+target_compile_features(ofw_lib INTERFACE cxx_std_20)
+add_library(ofw::ofw ALIAS ofw_lib)
+
+##==================================================================================================
 ## Options
 ##==================================================================================================
 option( OFW_BUILD_TEST  "Build tests for ofw" ON )
