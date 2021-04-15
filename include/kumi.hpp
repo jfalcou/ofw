@@ -375,11 +375,12 @@ namespace kumi
       return  make_tuple( call( index<I>, t0, others...)...);
     }(std::make_index_sequence<sizeof...(Ts)>());
   }
+
   //================================================================================================
   // Generalized sums
   //================================================================================================
   template<typename Function, product_type Tuple, typename Value>
-  constexpr auto fold_right(Function f, Tuple const& t, Value init)
+  [[nodiscard]] constexpr auto fold_right(Function f, Tuple const& t, Value init)
   {
     return  [&]<std::size_t... I>(std::index_sequence<I...>)
             {
