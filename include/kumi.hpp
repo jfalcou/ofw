@@ -149,9 +149,28 @@ namespace kumi
     //==============================================================================================
     // Tuple as functional object
     //==============================================================================================
-    template<typename Function> constexpr decltype(auto) operator()(Function&& f)
+    template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &
+      noexcept(noexcept(apply(std::forward<Function>(f),*this)))
     {
-      return apply(f,*this);
+      return apply(std::forward<Function>(f),*this);
+    }
+
+    template<typename Function> constexpr decltype(auto) operator()(Function&& f) &
+      noexcept(noexcept(apply(std::forward<Function>(f),*this)))
+    {
+      return apply(std::forward<Function>(f),*this);
+    }
+
+    template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &&
+      noexcept(noexcept(apply(std::forward<Function>(f),std::move(*this))))
+    {
+      return apply(std::forward<Function>(f),std::move(*this));
+    }
+
+    template<typename Function> constexpr decltype(auto) operator()(Function&& f) &&
+      noexcept(noexcept(apply(std::forward<Function>(f),std::move(*this))))
+    {
+      return apply(std::forward<Function>(f),std::move(*this));
     }
 
     //==============================================================================================
