@@ -67,7 +67,10 @@ namespace kumi
     constexpr auto&& get_leaf(leaf<I, T>&& arg) noexcept { return std::move(arg.value);  }
 
     template <std::size_t I, typename T>
-    constexpr decltype(auto) get_leaf(leaf<I, T> const& arg) noexcept { return arg.value;  }
+    constexpr auto const && get_leaf(leaf<I, T> const && arg) noexcept { return std::move(arg.value);  }
+
+    template <std::size_t I, typename T>
+    constexpr auto const & get_leaf(leaf<I, T> const& arg) noexcept { return arg.value;  }
 
     template <typename ISeq, typename... Ts> struct binder;
 
@@ -120,13 +123,25 @@ namespace kumi
     // Access
     //==============================================================================================
     template<std::size_t I> requires(I<sizeof...(Ts))
-    constexpr decltype(auto) operator[](index_t<I>) noexcept
+    constexpr decltype(auto) operator[](index_t<I>) & noexcept
     {
       return detail::get_leaf<I>(impl);
     }
 
     template<std::size_t I> requires(I<sizeof...(Ts))
-    constexpr decltype(auto) operator[](index_t<I>) const noexcept
+    constexpr decltype(auto) operator[](index_t<I>) && noexcept
+    {
+      return detail::get_leaf<I>(impl);
+    }
+
+    template<std::size_t I> requires(I<sizeof...(Ts))
+    constexpr decltype(auto) operator[](index_t<I>) const && noexcept
+    {
+      return detail::get_leaf<I>(impl);
+    }
+
+    template<std::size_t I> requires(I<sizeof...(Ts))
+    constexpr decltype(auto) operator[](index_t<I>) const & noexcept
     {
       return detail::get_leaf<I>(impl);
     }
@@ -304,16 +319,30 @@ namespace kumi
   //================================================================================================
   template<std::size_t I, typename... Ts>
   requires( I<sizeof...(Ts) )
-  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...>& arg) noexcept
+  [[nodiscard]] constexpr auto& get(tuple<Ts...>& arg) noexcept
+  {
+    return arg[index<I>];
+  }
+
+  template<std::size_t I, typename... Ts>
+  requires( I<sizeof...(Ts) )
+  [[nodiscard]] constexpr auto&& get(tuple<Ts...>&& arg) noexcept
+  {
+    return std::move( arg[index<I>]);
+  }
+
+  template<std::size_t I, typename... Ts>
+  requires(I<sizeof...(Ts))
+  [[nodiscard]] constexpr auto const& get(tuple<Ts...> const& arg) noexcept
   {
     return arg[index<I>];
   }
 
   template<std::size_t I, typename... Ts>
   requires(I<sizeof...(Ts))
-  [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...> const& arg) noexcept
+  [[nodiscard]] constexpr auto const&& get(tuple<Ts...> const&& arg) noexcept
   {
-    return arg[index<I>];
+    return std::move( arg[index<I>] );
   }
 
   //================================================================================================
@@ -448,6 +477,12 @@ namespace std
   struct  tuple_element<I, kumi::tuple<Head, Tail...>>
         : tuple_element<I-1,kumi::tuple<Tail...>>
   {};
+
+  template<std::size_t I, typename... Ts>
+  struct  tuple_element<I, kumi::tuple<Ts...> const>
+  {
+    using type = typename tuple_element<I, kumi::tuple<Ts...>>::type const;
+  };
 
   template<typename Head, typename... Tail>
   struct  tuple_element<0, kumi::tuple<Head, Tail...>>
