@@ -17,8 +17,7 @@ constexpr auto typed_interface(Vs const&... vs ) noexcept
   return s[rbr::keyword<int>] * s[rbr::keyword<double>];
 }
 
-template<typename... Vs>
-constexpr auto named_interface(Vs const&... vs ) noexcept
+constexpr auto named_interface(rbr::keyword_parameter auto  const&... vs ) noexcept
 {
   rbr::settings s(vs...);
   return s[factor_] * s[ref_];

@@ -43,6 +43,7 @@ namespace rbr
     // Turn a Type+Value pair into a Callable
     template<typename Callable> struct linked_value : Callable
     {
+      static constexpr bool is_parameter_type = true;
       constexpr linked_value( Callable f) noexcept : Callable(f) {}
       using Callable::operator();
     };
@@ -86,6 +87,10 @@ namespace rbr
       }
     };
   }
+
+  // keyword parameter concept
+  template<typename T>
+  concept keyword_parameter = std::remove_cvref_t<T>::is_parameter_type;
 
   // Build a key-value from an option object
   template<typename T>
