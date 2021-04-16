@@ -9,7 +9,7 @@
 #include <utility>
 #include <iosfwd>
 
-#define OFW_FWD(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
+#define KUMI_FWD(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 
 namespace kumi
 {
@@ -127,7 +127,7 @@ namespace kumi
   {
     return  [&]<std::size_t... I>(std::index_sequence<I...>)
             {
-              return OFW_FWD(f)(detail::get_leaf<I>(OFW_FWD(t).impl)...);
+              return KUMI_FWD(f)(detail::get_leaf<I>(KUMI_FWD(t).impl)...);
             }(std::make_index_sequence<std::remove_cvref_t<Tuple>::size()>());
   }
 
@@ -209,27 +209,27 @@ namespace kumi
     // Tuple as functional object
     //==============================================================================================
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &
-      noexcept(noexcept(kumi::apply(OFW_FWD(f),*this)))
+      noexcept(noexcept(kumi::apply(KUMI_FWD(f),*this)))
     {
-      return kumi::apply(OFW_FWD(f),*this);
+      return kumi::apply(KUMI_FWD(f),*this);
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) &
-      noexcept(noexcept(kumi::apply(OFW_FWD(f),*this)))
+      noexcept(noexcept(kumi::apply(KUMI_FWD(f),*this)))
     {
-      return kumi::apply(OFW_FWD(f),*this);
+      return kumi::apply(KUMI_FWD(f),*this);
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &&
-      noexcept(noexcept(kumi::apply(OFW_FWD(f),static_cast<tuple const&&>(*this))))
+      noexcept(noexcept(kumi::apply(KUMI_FWD(f),static_cast<tuple const&&>(*this))))
     {
-      return kumi::apply(OFW_FWD(f),static_cast<tuple const&&>(*this));
+      return kumi::apply(KUMI_FWD(f),static_cast<tuple const&&>(*this));
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) &&
-      noexcept(noexcept(kumi::apply(OFW_FWD(f),static_cast<tuple&&>(*this))))
+      noexcept(noexcept(kumi::apply(KUMI_FWD(f),static_cast<tuple&&>(*this))))
     {
-      return kumi::apply(OFW_FWD(f),static_cast<tuple&&>(*this));
+      return kumi::apply(KUMI_FWD(f),static_cast<tuple&&>(*this));
     }
 
     //==============================================================================================
@@ -313,7 +313,7 @@ namespace kumi
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
       {
-        ((detail::get_leaf<I>(impl) = detail::get_leaf<I>(OFW_FWD(other).impl)),...);
+        ((detail::get_leaf<I>(impl) = detail::get_leaf<I>(KUMI_FWD(other).impl)),...);
       }(std::make_index_sequence<sizeof...(Ts)>());
 
       return *this;
@@ -368,13 +368,13 @@ namespace kumi
   template <typename... Ts>
   [[nodiscard]] constexpr tuple<Ts&&...> forward_as_tuple(Ts&&... ts)
   {
-    return {OFW_FWD(ts)...};
+    return {KUMI_FWD(ts)...};
   }
 
   template <typename... Ts>
   [[nodiscard]] constexpr tuple<std::unwrap_ref_decay_t<Ts>...>  make_tuple(Ts&&... ts)
   {
-    return {OFW_FWD(ts)...};
+    return {KUMI_FWD(ts)...};
   }
 
   template<typename... Ts>
@@ -492,7 +492,7 @@ namespace kumi
   template<product_type T1, product_type T2>
   [[nodiscard]] constexpr auto operator|(T1&& t1, T2&& t2)
   {
-    return kumi::cat(OFW_FWD(t1), OFW_FWD(t2));
+    return kumi::cat(KUMI_FWD(t1), KUMI_FWD(t2));
   }
 
   //================================================================================================
