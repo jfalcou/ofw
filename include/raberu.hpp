@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <utility>
 
+#define RBR_FWD(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
+
 namespace rbr
 {
   // Lightweight container of value
@@ -21,7 +23,7 @@ namespace rbr
     template<typename V> constexpr auto operator=(V&& v) const noexcept;
     template<typename V> constexpr auto operator|(V&& value) const noexcept
     {
-      return type_or_<T,V>{std::forward<V>(value)};
+      return type_or_<T,V>{RBR_FWD(value)};
     }
   };
 
@@ -96,7 +98,7 @@ namespace rbr
   template<typename T>
   template<typename V> constexpr auto keyword_type<T>::operator=(V&& v) const noexcept
   {
-    return detail::link<keyword_type<T>>(std::forward<V>(v));
+    return detail::link<keyword_type<T>>(RBR_FWD(v));
   }
 
   // Extract tag from an Option
@@ -112,7 +114,7 @@ namespace rbr
 
     template<typename... Vs>
     constexpr settings( Vs&&... v )
-            : content_( detail::link<tag_t<std::decay_t<Vs>>>( std::forward<Vs>(v))... )
+            : content_( detail::link<tag_t<std::decay_t<Vs>>>( RBR_FWD(v))... )
     {}
 
     static constexpr std::ptrdiff_t size() noexcept { return sizeof...(Ts); }
@@ -142,8 +144,5 @@ namespace rbr
   };
 
   template<typename... Vs>
-  settings( Vs&&... v ) ->  settings< decltype( detail::link< tag_t<std::decay_t<Vs>>  >
-                                                            ( std::forward<Vs>(v) )
-                                              )...
-                                    >;
+  settings( Vs&&... v ) -> settings<decltype(detail::link<tag_t<std::decay_t<Vs>>>(RBR_FWD(v)))...>;
 }
