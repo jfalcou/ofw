@@ -539,6 +539,19 @@ namespace kumi
         ts,
         kumi::tuple {});
   }
+
+  //================================================================================================
+  // Zip multiple tuples contents
+  //================================================================================================
+  template<product_type T0, product_type... Ts>
+  requires((std::remove_cvref_t<T0>::size() == std::remove_cvref_t<Ts>::size()) && ...)
+  [[nodiscard]] constexpr auto zip(T0 &&t0, Ts &&...tuples)
+  {
+    return map( []<typename... Ms>(Ms && ...ms) { return make_tuple(std::forward<Ms>(ms)...); },
+                std::forward<T0>(t0),
+                std::forward<Ts>(tuples)...
+              );
+  }
 }
 
 //==================================================================================================
