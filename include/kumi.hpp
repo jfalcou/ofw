@@ -492,6 +492,35 @@ namespace kumi
   {
     return kumi::cat(std::forward<T1>(t1), std::forward<T2>(t2));
   }
+
+  //================================================================================================
+  // Flatten nested tuples : one layer at a time or recursively
+  //================================================================================================
+  template<typename... Ts>
+  [[nodiscard]] constexpr auto flatten(tuple<Ts...> const& ts)
+  {
+    return kumi::fold_left( []<typename M>(auto acc, M const& m)
+                            {
+                              if constexpr( product_type<M> ) return cat(acc, m);
+                              else  return cat(acc, kumi::tuple{m});
+                            }
+                          , ts
+                          , kumi::tuple{}
+                          );
+  }
+
+  template<typename... Ts>
+  [[nodiscard]] constexpr auto flatten_all(tuple<Ts...> const& ts)
+  {
+    return kumi::fold_left( []<typename M>(auto acc, M const& m)
+                            {
+                              if constexpr( product_type<M> ) return cat(acc, flatten(m));
+                              else  return cat(acc, kumi::tuple{m});
+                            }
+                          , ts
+                          , kumi::tuple{}
+                          );
+  }
 }
 
 //==================================================================================================
