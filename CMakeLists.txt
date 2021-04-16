@@ -24,6 +24,11 @@ endif()
 ##==================================================================================================
 add_library(ofw_lib INTERFACE)
 target_include_directories(ofw_lib INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+target_compile_options( ofw_lib INTERFACE -Wno-gnu-string-literal-operator-template)
+endif()
+
 target_compile_features(ofw_lib INTERFACE cxx_std_20)
 add_library(ofw::ofw ALIAS ofw_lib)
 
