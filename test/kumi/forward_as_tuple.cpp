@@ -34,27 +34,27 @@ TTS_CASE("Check tuple_element of kumi::forward_as_tuple")
 
 template<kumi::product_type Tuple> operations move_ctor_fwd(Tuple&& t)
 {
-  ctor_tracker local = std::move(std::forward<Tuple>(t)[kumi::index<0>]);
+  ctor_tracker local = std::forward<Tuple>(t)[kumi::index<0>];
   return local.value;
 }
 
 template<kumi::product_type Tuple> operations copy_ctor_fwd(Tuple&& t)
 {
-  ctor_tracker local = std::forward<Tuple>(t)[kumi::index<0>];
+  ctor_tracker local = t[kumi::index<0>];
   return local.value;
 }
 
 template<kumi::product_type Tuple> operations move_assign_fwd(Tuple&& t)
 {
   ctor_tracker local;
-  local = std::move(std::forward<Tuple>(t)[kumi::index<0>]);
+  local = std::forward<Tuple>(t)[kumi::index<0>];
   return local.value;
 }
 
 template<kumi::product_type Tuple> operations copy_assign_fwd(Tuple&& t)
 {
   ctor_tracker local;
-  local = std::forward<Tuple>(t)[kumi::index<0>];
+  local = t[kumi::index<0>];
   return local.value;
 }
 
