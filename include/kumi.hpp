@@ -7,7 +7,7 @@
 //==================================================================================================
 #pragma once
 #include <utility>
-#include <ostream>
+#include <iosfwd>
 
 #define OFW_FWD(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 
@@ -117,8 +117,58 @@ namespace kumi
   // Forward declaration
   //================================================================================================
 
+  template <typename... Ts> struct tuple;
+
+  //================================================================================================
+  //Apply f to each element of tuple and returns a continuation
+  //================================================================================================
+  template<typename Function, typename... Ts>
+  constexpr void for_each(Function f, tuple<Ts...>& t)
+  {
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      (f(detail::get_leaf<I>(t.impl)),...);
+    }(std::make_index_sequence<sizeof...(Ts)>());
+  }
+
+  template<typename Function, typename... Ts>
+  constexpr void for_each(Function f, tuple<Ts...> const& t)
+  {
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      (f(detail::get_leaf<I>(t.impl)),...);
+    }(std::make_index_sequence<sizeof...(Ts)>());
+  }
+
+  template<typename Function, typename... Ts>
+  constexpr void for_each_index(Function f, tuple<Ts...>& t)
+  {
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      (f(index<I>, detail::get_leaf<I>(t.impl)),...);
+    }(std::make_index_sequence<sizeof...(Ts)>());
+  }
+
+  template<typename Function, typename... Ts>
+  constexpr void for_each_index(Function f, tuple<Ts...> const& t)
+  {
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      (f(index<I>, detail::get_leaf<I>(t.impl)),...);
+    }(std::make_index_sequence<sizeof...(Ts)>());
+  }
+
+  //================================================================================================
+  // Pass every elements of the tuple to f
+  //================================================================================================
   template<typename Function, product_type Tuple>
-  constexpr decltype(auto) apply(Function&& f, Tuple&& t);
+  constexpr decltype(auto) apply(Function&& f, Tuple&& t)
+  {
+    return  [&]<std::size_t... I>(std::index_sequence<I...>)
+            {
+              return OFW_FWD(f)(detail::get_leaf<I>(OFW_FWD(t).impl)...);
+            }(std::make_index_sequence<std::remove_cvref_t<Tuple>::size()>());
+  }
 
   //================================================================================================
   // Main tuple class
@@ -293,10 +343,11 @@ namespace kumi
     //==============================================================================================
     // Stream interaction
     //==============================================================================================
-    friend std::ostream& operator<<(std::ostream& os, tuple const& t) noexcept
+    template <typename CharT, typename Traits>
+    friend std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& os, tuple const& t) noexcept
     {
       os << "( ";
-      for_each( [&os](auto const& e) { os << e << " "; }, t);
+      kumi::for_each( [&os](auto const& e) { os << e << " "; }, t);
       os << ")";
 
       return os;
@@ -371,57 +422,6 @@ namespace kumi
   [[nodiscard]] constexpr decltype(auto) get(tuple<Ts...> const&& arg) noexcept
   {
     return static_cast<tuple<Ts...> const&&>( arg )[index<I>] ;
-  }
-
-  //================================================================================================
-  // Pass every elements of the tuple to f
-  //================================================================================================
-  template<typename Function, product_type Tuple>
-  constexpr decltype(auto) apply(Function&& f, Tuple&& t)
-  {
-    return  [&]<std::size_t... I>(std::index_sequence<I...>)
-            {
-              return OFW_FWD(f)(detail::get_leaf<I>(OFW_FWD(t).impl)...);
-            }(std::make_index_sequence<std::remove_cvref_t<Tuple>::size()>());
-  }
-
-  //================================================================================================
-  //Apply f to each element of tuple and returns a continuation
-  //================================================================================================
-  template<typename Function, typename... Ts>
-  constexpr void for_each(Function f, tuple<Ts...>& t)
-  {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
-      (f(detail::get_leaf<I>(t.impl)),...);
-    }(std::make_index_sequence<sizeof...(Ts)>());
-  }
-
-  template<typename Function, typename... Ts>
-  constexpr void for_each(Function f, tuple<Ts...> const& t)
-  {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
-      (f(detail::get_leaf<I>(t.impl)),...);
-    }(std::make_index_sequence<sizeof...(Ts)>());
-  }
-
-  template<typename Function, typename... Ts>
-  constexpr void for_each_index(Function f, tuple<Ts...>& t)
-  {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
-      (f(index<I>, detail::get_leaf<I>(t.impl)),...);
-    }(std::make_index_sequence<sizeof...(Ts)>());
-  }
-
-  template<typename Function, typename... Ts>
-  constexpr void for_each_index(Function f, tuple<Ts...> const& t)
-  {
-    [&]<std::size_t... I>(std::index_sequence<I...>)
-    {
-      (f(index<I>, detail::get_leaf<I>(t.impl)),...);
-    }(std::make_index_sequence<sizeof...(Ts)>());
   }
 
   //================================================================================================
