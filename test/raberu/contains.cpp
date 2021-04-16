@@ -27,7 +27,7 @@ TTS_CASE("Check settings(...).contains behavior")
 TTS_CASE("Check settings(...).contains constexpr behavior")
 {
   using namespace std::literals;
-  using namespace rbr::literal;
+  using namespace rbr::literals;
 
   constexpr rbr::settings values("custom"_kw = foo{}, name_ = 88, value_ = 3.f);
 

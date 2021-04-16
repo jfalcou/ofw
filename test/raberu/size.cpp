@@ -21,7 +21,7 @@ TTS_CASE("Check settings(...) size - simple parameters")
 TTS_CASE("Check settings(...) size - named parameters")
 {
   using namespace std::literals;
-  using namespace rbr::literal;
+  using namespace rbr::literals;
 
   TTS_EQUAL(rbr::settings ( custom_ = foo{} ).size()                                , 1);
   TTS_EQUAL(rbr::settings ( custom_ = foo{}, value_ = 3.f ).size()                  , 2);
@@ -43,7 +43,7 @@ TTS_CASE("Check settings(...) constexpr size - simple parameters")
 TTS_CASE("Check settings(...) constexpr size - named parameters")
 {
   using namespace std::literals;
-  using namespace rbr::literal;
+  using namespace rbr::literals;
 
   TTS_CONSTEXPR_EQUAL( rbr::settings ( custom_ = foo{} ).size(), 1);
   TTS_CONSTEXPR_EQUAL( rbr::settings ( custom_ = foo{}, value_ = 3.f ).size(), 2);

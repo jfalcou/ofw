@@ -29,7 +29,7 @@ namespace rbr
   template<typename T> inline constexpr const keyword_type<T> keyword = {};
 
   // Keyword-type user defined literals
-  namespace literal
+  namespace literals
   {
     template<char... Char> struct id_ {};
     template<typename T, T... Chars> constexpr auto operator""_kw() noexcept

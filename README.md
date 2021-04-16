@@ -1,8 +1,8 @@
-# OFW - One File Wonders 
+# OFW - One File Wonders
 
-[![OFW CI](https://github.com/jfalcou/ofw/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/jfalcou/ofw/actions/workflows/main.yml) 
-[![Licence](https://img.shields.io/github/license/jfalcou/ofw?style=plastic)](https://img.shields.io/github/license/jfalcou/ofw?style=plastic) 
-[![Discord](https://img.shields.io/discord/692734675726237696?style=plastic)](https://discord.com/channels/692734675726237696/828012535361830942) 
+[![OFW CI](https://github.com/jfalcou/ofw/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/jfalcou/ofw/actions/workflows/main.yml)
+[![Licence](https://img.shields.io/github/license/jfalcou/ofw?style=plastic)](https://img.shields.io/github/license/jfalcou/ofw?style=plastic)
+[![Discord](https://img.shields.io/discord/692734675726237696?style=plastic)](https://discord.com/channels/692734675726237696/828012535361830942)
 
 ## WTF is OFW
 
@@ -27,7 +27,7 @@ Installing a library from **OFW** is rather straightforward.
 
 Using the library then boils down to including its include files and compile your applications using C++20.
 
-You can also use CMake FetchContent operation and use the `ofw` library target that our CMake exports.
+You can also use CMake FetchContent operation and use the `ofw::ofw` library target that our CMake exports.
 
 ## License
 This library is licensed under the MIT License as specified in the LICENSE.md file.
