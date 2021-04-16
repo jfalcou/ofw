@@ -27,6 +27,8 @@ Installing a library from **OFW** is rather straightforward.
 
 Using the library then boils down to including its include files and compile your applications using C++20.
 
+You can also use CMake FetchContent operation and use the `ofw` library target that our CMake exports.
+
 ## License
 This library is licensed under the MIT License as specified in the LICENSE.md file.
 If you use any One File Wonders in your project or product, feel free to send us
