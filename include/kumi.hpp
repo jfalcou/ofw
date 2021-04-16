@@ -112,6 +112,13 @@ namespace kumi
   concept sized_product_type = product_type<T> && (T::size() == N);
 
   //================================================================================================
+  // Forward declaration
+  //================================================================================================
+
+  template<typename Function, product_type Tuple>
+  constexpr decltype(auto) apply(Function&& f, Tuple&& t);
+
+  //================================================================================================
   // Main tuple class
   //================================================================================================
   template <typename... Ts> struct tuple
@@ -150,27 +157,27 @@ namespace kumi
     // Tuple as functional object
     //==============================================================================================
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &
-      noexcept(noexcept(apply(std::forward<Function>(f),*this)))
+      noexcept(noexcept(kumi::apply(std::forward<Function>(f),*this)))
     {
-      return apply(std::forward<Function>(f),*this);
+      return kumi::apply(std::forward<Function>(f),*this);
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) &
-      noexcept(noexcept(apply(std::forward<Function>(f),*this)))
+      noexcept(noexcept(kumi::apply(std::forward<Function>(f),*this)))
     {
-      return apply(std::forward<Function>(f),*this);
+      return kumi::apply(std::forward<Function>(f),*this);
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) const &&
-      noexcept(noexcept(apply(std::forward<Function>(f),std::move(*this))))
+      noexcept(noexcept(kumi::apply(std::forward<Function>(f),std::move(*this))))
     {
-      return apply(std::forward<Function>(f),std::move(*this));
+      return kumi::apply(std::forward<Function>(f),std::move(*this));
     }
 
     template<typename Function> constexpr decltype(auto) operator()(Function&& f) &&
-      noexcept(noexcept(apply(std::forward<Function>(f),std::move(*this))))
+      noexcept(noexcept(kumi::apply(std::forward<Function>(f),std::move(*this))))
     {
-      return apply(std::forward<Function>(f),std::move(*this));
+      return kumi::apply(std::forward<Function>(f),std::move(*this));
     }
 
     //==============================================================================================
@@ -483,7 +490,7 @@ namespace kumi
   template<product_type T1, product_type T2>
   [[nodiscard]] constexpr auto operator|(T1&& t1, T2&& t2)
   {
-    return cat(std::forward<T1>(t1), std::forward<T2>(t2));
+    return kumi::cat(std::forward<T1>(t1), std::forward<T2>(t2));
   }
 }
 
