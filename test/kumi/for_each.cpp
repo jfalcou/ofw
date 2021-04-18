@@ -6,15 +6,15 @@
 **/
 //==================================================================================================
 #define TTS_MAIN
-#include <tts/tts.hpp>
 #include <kumi.hpp>
+#include <tts/tts.hpp>
 
 TTS_CASE("Check for_each behavior")
 {
-  auto t = kumi::tuple{1,2.,3.4f,'5'};
-  kumi::for_each( [](auto& m) { m++; }, t);
+  auto t = kumi::tuple {1, 2., 3.4f, '5'};
+  kumi::for_each([](auto &m) { m++; }, t);
 
-  auto[i,d,f,c] = t;
+  auto [i, d, f, c] = t;
   TTS_EQUAL(i, 2);
   TTS_EQUAL(d, 3.);
   TTS_EQUAL(f, 4.4f);
@@ -23,10 +23,9 @@ TTS_CASE("Check for_each behavior")
 
 TTS_CASE("Check for_each constexpr behavior")
 {
-  constexpr auto t = []()
-  {
-    auto it = kumi::tuple{1,2.,3.4f,'5'};
-    kumi::for_each( [](auto& m) { m++; }, it);
+  constexpr auto t = []() {
+    auto it = kumi::tuple {1, 2., 3.4f, '5'};
+    kumi::for_each([](auto &m) { m++; }, it);
     return it;
   }();
 
@@ -38,16 +37,17 @@ TTS_CASE("Check for_each constexpr behavior")
 
 TTS_CASE("Check for_each_index behavior")
 {
-  auto t = kumi::tuple{1,2.,3.4f,'5'};
-  kumi::for_each_index( [](auto i, auto& m)
-                        {
-                          if constexpr(i %2 == 0) m++;
-                          else                    m--;
-                        }
-                      , t
-                      );
+  auto t = kumi::tuple {1, 2., 3.4f, '5'};
+  kumi::for_each_index(
+      [](auto i, auto &m) {
+        if constexpr( i % 2 == 0 )
+          m++;
+        else
+          m--;
+      },
+      t);
 
-  auto[i,d,f,c] = t;
+  auto [i, d, f, c] = t;
   TTS_EQUAL(i, 2);
   TTS_EQUAL(d, 1.);
   TTS_EQUAL(f, 4.4f);
@@ -56,14 +56,16 @@ TTS_CASE("Check for_each_index behavior")
 
 TTS_CASE("Check for_each_index constexpr behavior")
 {
-  constexpr auto t = []()
-  {
-    auto it = kumi::tuple{1,2.,3.4f,'5'};
-    kumi::for_each_index( [](auto i, auto& m)
-                          {
-                            if constexpr(i %2 == 0) m++;
-                            else                    m--;
-                          }, it);
+  constexpr auto t = []() {
+    auto it = kumi::tuple {1, 2., 3.4f, '5'};
+    kumi::for_each_index(
+        [](auto i, auto &m) {
+          if constexpr( i % 2 == 0 )
+            m++;
+          else
+            m--;
+        },
+        it);
     return it;
   }();
 

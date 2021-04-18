@@ -6,24 +6,34 @@
 **/
 //==================================================================================================
 #pragma once
+#include <array>
 #include <raberu.hpp>
 #include <string>
-#include <array>
 
-template<bool B> using bool_ =  std::bool_constant<B>;
+template<bool B> using bool_ = std::bool_constant<B>;
 
-struct foo { int    value = 42;   };
-struct bar { double value = 4.2;  };
+struct foo
+{
+  int value = 42;
+};
+struct bar
+{
+  double value = 4.2;
+};
 
-using point = std::array<int,3>;
+using point = std::array<int, 3>;
 
-inline constexpr auto custom_  = ::rbr::keyword<struct custom_tag>;
-inline constexpr auto coord_   = ::rbr::keyword<struct coord_tag>;
+inline constexpr auto custom_ = ::rbr::keyword<struct custom_tag>;
+inline constexpr auto coord_  = ::rbr::keyword<struct coord_tag>;
 
 namespace rbr
 {
-  template<> struct tag<foo> : tag<struct custom_tag> {};
-  template<> struct tag<bar> : tag<struct custom_tag> {};
+  template<> struct tag<foo> : tag<struct custom_tag>
+  {
+  };
+  template<> struct tag<bar> : tag<struct custom_tag>
+  {
+  };
 }
 
 inline constexpr auto value_  = ::rbr::keyword<float>;
