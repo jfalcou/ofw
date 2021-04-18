@@ -220,28 +220,28 @@ namespace kumi
     //==============================================================================================
     template<typename Function>
     constexpr decltype(auto)
-    operator()(Function &&f) const & noexcept(noexcept(kumi::apply(KUMI_FWD(f), *this)))
+    operator()(Function &&f) const &noexcept(noexcept(kumi::apply(KUMI_FWD(f), *this)))
     {
       return kumi::apply(KUMI_FWD(f), *this);
     }
 
     template<typename Function>
     constexpr decltype(auto)
-    operator()(Function &&f) & noexcept(noexcept(kumi::apply(KUMI_FWD(f), *this)))
+    operator()(Function &&f) &noexcept(noexcept(kumi::apply(KUMI_FWD(f), *this)))
     {
       return kumi::apply(KUMI_FWD(f), *this);
     }
 
     template<typename Function>
-    constexpr decltype(auto) operator()(Function &&f) const &&
-    noexcept(noexcept(kumi::apply(KUMI_FWD(f), static_cast<tuple const &&>(*this))))
+    constexpr decltype(auto) operator()(Function &&f) const &&noexcept(
+        noexcept(kumi::apply(KUMI_FWD(f), static_cast<tuple const &&>(*this))))
     {
       return kumi::apply(KUMI_FWD(f), static_cast<tuple const &&>(*this));
     }
 
     template<typename Function>
-    constexpr decltype(auto) operator()(Function &&f) &&
-    noexcept(noexcept(kumi::apply(KUMI_FWD(f), static_cast<tuple &&>(*this))))
+    constexpr decltype(auto) operator()(Function &&f) &&noexcept(
+        noexcept(kumi::apply(KUMI_FWD(f), static_cast<tuple &&>(*this))))
     {
       return kumi::apply(KUMI_FWD(f), static_cast<tuple &&>(*this));
     }
@@ -545,12 +545,29 @@ namespace kumi
   //================================================================================================
   template<product_type T0, product_type... Ts>
   requires((std::remove_cvref_t<T0>::size() == std::remove_cvref_t<Ts>::size()) && ...)
-  [[nodiscard]] constexpr auto zip(T0 &&t0, Ts &&...tuples)
+      [[nodiscard]] constexpr auto zip(T0 &&t0, Ts &&...tuples)
   {
-    return map( []<typename... Ms>(Ms && ...ms) { return make_tuple(std::forward<Ms>(ms)...); },
-                std::forward<T0>(t0),
-                std::forward<Ts>(tuples)...
-              );
+    return map(
+        []<typename... Ms>(Ms && ...ms) { return make_tuple(std::forward<Ms>(ms)...); },
+        std::forward<T0>(t0),
+        std::forward<Ts>(tuples)...);
+  }
+
+  //================================================================================================
+  // Unzip a tuple
+  //================================================================================================
+  template<typename T0, typename... Ts>
+  [[nodiscard]] constexpr auto unzip(tuple<T0, Ts...> const &t)
+  {
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      constexpr auto uz = []<typename N>(N const &, auto const &u) {
+        return apply([](auto const &...m) { return make_tuple(get<N::value>(m)...); }, u);
+      };
+
+      return make_tuple(uz(index_t<I> {}, t)...);
+    }
+    (std::make_index_sequence<T0::size()>());
   }
 }
 
