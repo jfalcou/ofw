@@ -461,7 +461,7 @@ namespace kumi
   // Generalized sums
   //================================================================================================
   template<typename Function, product_type Tuple, typename Value>
-  [[nodiscard]] constexpr auto fold_right(Function f, Tuple const &t, Value init)
+  [[nodiscard]] constexpr auto fold_left(Function f, Tuple const &t, Value init)
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
@@ -473,7 +473,7 @@ namespace kumi
   }
 
   template<typename Function, product_type Tuple, typename Value>
-  [[nodiscard]] constexpr auto fold_left(Function f, Tuple const &t, Value init)
+  [[nodiscard]] constexpr auto fold_right(Function f, Tuple const &t, Value init)
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
@@ -516,7 +516,7 @@ namespace kumi
   //================================================================================================
   template<typename... Ts> [[nodiscard]] constexpr auto flatten(tuple<Ts...> const &ts)
   {
-    return kumi::fold_left(
+    return kumi::fold_right(
         []<typename M>(auto acc, M const &m) {
           if constexpr( product_type<M> )
             return cat(acc, m);
@@ -529,7 +529,7 @@ namespace kumi
 
   template<typename... Ts> [[nodiscard]] constexpr auto flatten_all(tuple<Ts...> const &ts)
   {
-    return kumi::fold_left(
+    return kumi::fold_right(
         []<typename M>(auto acc, M const &m) {
           if constexpr( product_type<M> )
             return cat(acc, flatten(m));
