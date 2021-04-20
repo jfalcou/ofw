@@ -554,10 +554,10 @@ namespace kumi
   }
 
   //================================================================================================
-  // Unzip a tuple
+  // Transpose a tuple of tuples
   //================================================================================================
   template<typename T0, typename... Ts>
-  [[nodiscard]] constexpr auto unzip(tuple<T0, Ts...> const &t)
+  [[nodiscard]] constexpr auto transpose(tuple<T0, Ts...> const &t)
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
