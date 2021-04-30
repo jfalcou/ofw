@@ -120,10 +120,11 @@ namespace kumi
   //==============================================================================================
   // Concept
   //==============================================================================================
-  template<typename T> concept product_type = std::remove_cvref_t<T>::is_product_type;
+  template<typename T>
+  concept product_type = std::remove_cvref_t<T>::is_product_type;
 
   template<typename T, std::size_t N>
-  concept sized_product_type = product_type<T> && (T::size() == N);
+  concept sized_product_type = product_type<T> &&(T::size() == N);
 
   //================================================================================================
   // Forward declaration
@@ -394,16 +395,14 @@ namespace kumi
     return {KUMI_FWD(ts)...};
   }
 
-  template<typename... Ts>
-  template<std::size_t I0>
+  template<typename... Ts> template<std::size_t I0>
   requires(I0 <= sizeof...(Ts))
       [[nodiscard]] constexpr auto tuple<Ts...>::split(index_t<I0> const &) const noexcept
   {
     return kumi::make_tuple(extract(index<0>, index<I0>), extract(index<I0>));
   }
 
-  template<typename... Ts>
-  template<std::size_t I0>
+  template<typename... Ts> template<std::size_t I0>
   requires(I0 <= sizeof...(Ts))
       [[nodiscard]] constexpr auto tuple<Ts...>::split(index_t<I0> const &) noexcept
   {
@@ -448,9 +447,8 @@ namespace kumi
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
-      auto call = [&]<std::size_t N>(index_t<N>, auto const &...args) {
-        return f(detail::get_leaf<N>(args.impl)...);
-      };
+      auto call = [&]<std::size_t N>(index_t<N>, auto const &...args)
+      { return f(detail::get_leaf<N>(args.impl)...); };
 
       return make_tuple(call(index<I>, t0, others...)...);
     }
@@ -517,7 +515,8 @@ namespace kumi
   template<typename... Ts> [[nodiscard]] constexpr auto flatten(tuple<Ts...> const &ts)
   {
     return kumi::fold_right(
-        []<typename M>(auto acc, M const &m) {
+        []<typename M>(auto acc, M const &m)
+        {
           if constexpr( product_type<M> )
             return cat(acc, m);
           else
@@ -530,7 +529,8 @@ namespace kumi
   template<typename... Ts> [[nodiscard]] constexpr auto flatten_all(tuple<Ts...> const &ts)
   {
     return kumi::fold_right(
-        []<typename M>(auto acc, M const &m) {
+        []<typename M>(auto acc, M const &m)
+        {
           if constexpr( product_type<M> )
             return cat(acc, flatten(m));
           else
@@ -561,13 +561,22 @@ namespace kumi
   {
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
-      constexpr auto uz = []<typename N>(N const &, auto const &u) {
-        return apply([](auto const &...m) { return make_tuple(get<N::value>(m)...); }, u);
-      };
+      constexpr auto uz = []<typename N>(N const &, auto const &u)
+      { return apply([](auto const &...m) { return make_tuple(get<N::value>(m)...); }, u); };
 
       return make_tuple(uz(index_t<I> {}, t)...);
     }
     (std::make_index_sequence<T0::size()>());
+  }
+
+  //================================================================================================
+  // Reorder elements of a tuple
+  //================================================================================================
+  template<std::size_t... Idx, product_type Tuple>
+  requires((Idx < std::remove_cvref_t<Tuple>::size()) && ...)
+      [[nodiscard]] constexpr auto reorder(Tuple &&t)
+  {
+    return make_tuple(KUMI_FWD(t)[index<Idx>]...);
   }
 }
 
