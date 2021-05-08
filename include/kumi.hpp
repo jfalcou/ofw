@@ -46,16 +46,32 @@ namespace kumi
     //==============================================================================================
     // Helper concepts
     //==============================================================================================
-    template<typename From, typename To> struct is_piecewise_assignable;
+    template<typename From, typename To> struct is_piecewise_constructible;
+    template<typename From, typename To> struct is_piecewise_convertible;
 
     template<template<class...> class Box, typename... From, typename... To>
-    struct is_piecewise_assignable<Box<From...>, Box<To...>>
+    struct is_piecewise_convertible<Box<From...>, Box<To...>>
     {
       static constexpr bool value = (... && std::convertible_to<From, To>);
     };
 
+    template<template<class...> class Box, typename... From, typename... To>
+    struct is_piecewise_constructible<Box<From...>, Box<To...>>
+    {
+      static constexpr bool value = (... && std::is_constructible_v<To, From>);
+    };
+
     template<typename From, typename To>
-    concept piecewise_assignable = detail::is_piecewise_assignable<From, To>::value;
+    concept piecewise_convertible = detail::is_piecewise_convertible<From, To>::value;
+
+    template<typename From, typename To>
+    concept piecewise_constructible = detail::is_piecewise_constructible<From, To>::value;
+
+    template<typename T, typename... Args>
+    concept implicit_constructible = requires(Args... args)
+    {
+      T {args...};
+    };
 
     //==============================================================================================
     // Tuple leaf binder tricks
@@ -311,10 +327,33 @@ namespace kumi
     [[nodiscard]] static constexpr bool empty() noexcept { return sizeof...(Ts) == 0; }
 
     //==============================================================================================
+    // Conversions
+    //==============================================================================================
+    template<typename... Us>
+    requires( detail::piecewise_constructible<tuple<Us...>,tuple> )
+    explicit(!detail::piecewise_constructible<tuple<Us...>,tuple> )
+    constexpr operator tuple<Us...>() const
+    {
+      return apply([](auto &&...elems) { return kumi::tuple{ static_cast<Us>(elems)...}; }, *this);
+    }
+
+    template<typename Type>
+    requires( detail::implicit_constructible<Type, Ts...> )
+    explicit(!detail::implicit_constructible<Type, Ts...> )
+    constexpr operator Type() const
+    {
+      return [&]<std::size_t... I>(std::index_sequence<I...>)
+      {
+        return Type{detail::get_leaf<I>(impl)...};
+      }
+      (std::make_index_sequence<sizeof...(Ts)>());
+    }
+
+    //==============================================================================================
     // Assignment
     //==============================================================================================
     template<typename... Us>
-    requires(detail::piecewise_assignable<tuple, tuple<Us...>>) constexpr tuple &
+    requires(detail::piecewise_convertible<tuple, tuple<Us...>>) constexpr tuple &
     operator=(tuple<Us...> const &other)
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
@@ -327,7 +366,7 @@ namespace kumi
     }
 
     template<typename... Us>
-    requires(detail::piecewise_assignable<tuple, tuple<Us...>>) constexpr tuple &
+    requires(detail::piecewise_convertible<tuple, tuple<Us...>>) constexpr tuple &
     operator=(tuple<Us...> &&other)
     {
       [&]<std::size_t... I>(std::index_sequence<I...>)
