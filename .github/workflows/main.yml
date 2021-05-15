@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  gcc:
+  gcc-10:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch current branch
@@ -18,7 +18,17 @@ jobs:
         with:
           compiler: 'g++-10'
 
-  clang:
+  gcc-11:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch current branch
+        uses: actions/checkout@v2
+      - name: Testing OFW with g++
+        uses: ./.github/actions/run_tests
+        with:
+          compiler: 'g++-11'
+
+  clang-12:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch current branch
@@ -26,4 +36,4 @@ jobs:
       - name: Testing OFW with clang
         uses: ./.github/actions/run_tests
         with:
-          compiler: 'clang++-10'
+          compiler: 'clang++-12'
