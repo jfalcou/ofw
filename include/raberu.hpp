@@ -295,6 +295,9 @@ namespace rbr
     }
   };
 
+  // keyword parameter exact match concept
+  template<typename Param, auto Keyword> concept exactly = rbr::match<Param>::with(Keyword);
+
   // Traits to fetch type of an option from the type of a Settings
   template<typename Settings, auto Keyword, typename Default = unknown_key>
   struct get_type
