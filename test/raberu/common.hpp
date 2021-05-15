@@ -40,3 +40,6 @@ inline constexpr auto value_  = ::rbr::keyword<float>;
 inline constexpr auto name_   = ::rbr::keyword<std::string>;
 inline constexpr auto factor_ = ::rbr::keyword<int>;
 inline constexpr auto ref_    = ::rbr::keyword<double>;
+
+inline constexpr auto is_transparent_ = ::rbr::flag<struct transparent>;
+inline constexpr auto is_modal_       = ::rbr::flag<struct modal>;

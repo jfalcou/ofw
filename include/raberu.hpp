@@ -30,7 +30,7 @@ namespace rbr
     template<typename V> constexpr auto operator=(V &&v) const noexcept;
     template<typename V> constexpr auto operator|(V &&value) const noexcept
     {
-      return type_or_<T, V> {RBR_FWD(value)};
+      return type_or_<type, V> {RBR_FWD(value)};
     }
 
     template<typename U> constexpr auto operator|(keyword_type<U>) const noexcept
@@ -54,15 +54,56 @@ namespace rbr
   // Keyword_type generator
   template<typename T> inline constexpr const keyword_type<T> keyword = {};
 
-  // Keyword-type user defined literals
+  // Flag-like keyword parameter
+  template<typename T> struct flag_type
+  {
+    static constexpr bool is_parameter_type     = true;
+    using key_type                              = flag_type<T>;
+    using type                                  = flag_type<T>;
+
+    template<typename V> constexpr auto operator|(V &&value) const noexcept
+    {
+      return type_or_<type, V> {RBR_FWD(value)};
+    }
+
+    template<typename U> constexpr auto operator|(flag_type<U>) const noexcept
+    {
+      return either_<flag_type<T>, flag_type<U>> {};
+    }
+
+    template<typename... Kws>
+    friend constexpr auto operator|(either_<Kws...>, flag_type) noexcept
+    {
+      return either_<Kws..., flag_type<T>> {};
+    }
+
+    template<typename... Kws>
+    friend constexpr auto operator|(flag_type, either_<Kws...>) noexcept
+    {
+      return either_<flag_type<T>, Kws...> {};
+    }
+
+    constexpr bool operator()(flag_type<T> const&) noexcept { return true; }
+  };
+
+  // Flag_type generator
+  template<typename T> inline constexpr const flag_type<T> flag = {};
+
+  // Keyword/Flag-type user defined literals
   namespace literals
   {
     template<char... Char> struct id_
     {
     };
+
     template<typename T, T... Chars> constexpr auto operator""_kw() noexcept
     {
       return rbr::keyword<id_<Chars...>>;
+    }
+
+    template<typename T, T... Chars> constexpr auto operator""_fl() noexcept
+    {
+      return rbr::flag<id_<Chars...>>;
     }
   }
 
@@ -124,6 +165,12 @@ namespace rbr
         // If not found before, return the unknown_key value
         return unknown_key {};
       }
+
+      template<typename K> constexpr auto operator()(flag_type<K> const &) const noexcept
+      {
+        // If not found before, return the unknown_key value
+        return unknown_key {};
+      }
     };
   }
 
@@ -144,6 +191,11 @@ namespace rbr
   template<typename O> struct tag<keyword_type<O>>
   {
     using type = keyword_type<O>;
+  };
+
+  template<typename O> struct tag<flag_type<O>>
+  {
+    using type = flag_type<O>;
   };
 
   template<typename K, typename C> struct tag<detail::linked_value<K, C>>
@@ -177,10 +229,16 @@ namespace rbr
     static constexpr std::ptrdiff_t size() noexcept { return sizeof...(Ts); }
 
     // Named options interface
-    template<typename T> static constexpr bool contains(keyword_type<T> const &) noexcept
+    template<typename T> static constexpr auto contains(keyword_type<T> const &) noexcept
     {
       using found = decltype(std::declval<parent>()(tag_t<T> {}));
-      return !detail::is_unknown_v<found>;
+      return std::bool_constant<!detail::is_unknown_v<found>>{};
+    }
+
+    template<typename T> static constexpr auto contains(flag_type<T> const &) noexcept
+    {
+      using found = decltype(std::declval<parent>()(flag_type<T> {}));
+      return std::bool_constant<!detail::is_unknown_v<found>>{};
     }
 
     template<typename T>
@@ -189,15 +247,18 @@ namespace rbr
       return content_(tgt);
     }
 
+    template<typename T>
+    constexpr bool operator[](flag_type<T> const &tgt) const noexcept
+    {
+      return contains(tgt);
+    }
+
     template<typename T, typename V>
     constexpr decltype(auto) operator[](type_or_<T, V> const &tgt) const
     {
-      if constexpr( contains(keyword_type<T> {}) )
-        return content_(keyword_type<T> {});
-      else if constexpr( std::is_invocable_v<V, keyword_type<T>> )
-        return tgt.value(keyword_type<T> {});
-      else
-        return tgt.value;
+            if constexpr( contains(T{}) )             return (*this)[T{}];
+      else  if constexpr( std::is_invocable_v<V, T> ) return tgt.value(T{});
+      else                                            return tgt.value;
     }
 
     // Pattern matcher
@@ -210,6 +271,11 @@ namespace rbr
     template<typename K> static inline constexpr bool validate(keyword_type<K> const &) noexcept
     {
       return (std::same_as<Ks, keyword_type<K>> && ... && true);
+    }
+
+    template<typename K> static inline constexpr bool validate(flag_type<K> const &) noexcept
+    {
+      return (std::same_as<Ks, flag_type<K>> && ... && true);
     }
 
     parent content_;
