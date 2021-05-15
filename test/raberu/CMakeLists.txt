@@ -7,6 +7,7 @@
 generate_test("raberu" "access.cpp")
 generate_test("raberu" "concepts.cpp")
 generate_test("raberu" "contains.cpp")
+generate_test("raberu" "constraints.cpp")
 generate_test("raberu" "get_type.cpp")
 generate_test("raberu" "interface.cpp")
 generate_test("raberu" "size.cpp")
