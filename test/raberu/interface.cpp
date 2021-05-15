@@ -11,8 +11,7 @@
 #include <tts/tts.hpp>
 
 template<typename... Vs>
-constexpr auto
-typed_interface(Vs const &...vs) noexcept
+constexpr auto typed_interface(Vs const &...vs) noexcept
 {
   rbr::settings s(vs...);
   return s[rbr::keyword<int>] * s[rbr::keyword<double>];
@@ -20,6 +19,14 @@ typed_interface(Vs const &...vs) noexcept
 
 constexpr auto
 named_interface(rbr::keyword_parameter auto const &...vs) noexcept
+{
+  rbr::settings s(vs...);
+  return s[factor_] * s[ref_];
+}
+
+template<rbr::keyword_parameter... Vs>
+constexpr auto restricted_interface(Vs const &...vs) noexcept
+requires( rbr::match<Vs...>::with(factor_ | ref_ | is_modal_) )
 {
   rbr::settings s(vs...);
   return s[factor_] * s[ref_];
@@ -37,6 +44,14 @@ TTS_CASE("Check settings(...) as function interface with named parameters")
   TTS_EQUAL(named_interface(ref_ = 3.41, factor_ = 10), 34.1);
 }
 
+TTS_CASE("Check settings(...) as function interface with restricted named parameters")
+{
+  TTS_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41), 34.1);
+  TTS_EQUAL(restricted_interface(ref_ = 3.41, factor_ = 10), 34.1);
+  TTS_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41, is_modal_), 34.1);
+  TTS_EQUAL(restricted_interface(factor_ = 10, is_modal_, ref_ = 3.41), 34.1);
+}
+
 TTS_CASE("Check settings(...) as constexpr function interface with simple parameters")
 {
   TTS_CONSTEXPR_EQUAL(typed_interface(10, 3.41), 34.1);
@@ -47,4 +62,12 @@ TTS_CASE("Check settings(...) as constexpr function interface with named paramet
 {
   TTS_CONSTEXPR_EQUAL(named_interface(factor_ = 10, ref_ = 3.41), 34.1);
   TTS_CONSTEXPR_EQUAL(named_interface(ref_ = 3.41, factor_ = 10), 34.1);
+}
+
+TTS_CASE("Check settings(...) as constexpr function interface with restricted named parameters")
+{
+  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41), 34.1);
+  TTS_CONSTEXPR_EQUAL(restricted_interface(ref_ = 3.41, factor_ = 10), 34.1);
+  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41, is_modal_), 34.1);
+  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, is_modal_, ref_ = 3.41), 34.1);
 }
