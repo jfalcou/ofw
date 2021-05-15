@@ -83,7 +83,7 @@ namespace rbr
       return either_<flag_type<T>, Kws...> {};
     }
 
-    constexpr bool operator()(flag_type<T> const&) noexcept { return true; }
+    constexpr std::true_type operator()(flag_type<T> const&) noexcept { return {}; }
   };
 
   // Flag_type generator
@@ -123,6 +123,12 @@ namespace rbr
   // keyword parameter concept
   template<typename T> concept keyword_parameter = std::remove_cvref_t<T>::is_parameter_type;
 
+  // Type notifying that we can't find a given key
+  struct unknown_key
+  {
+    template<typename... T> unknown_key(T &&...) {}
+  };
+
   namespace detail
   {
     // Build the type->value lambda capture
@@ -143,12 +149,6 @@ namespace rbr
             Key {}, [w = std::move(v)](Key const &) constexpr->T const & { return w; });
       }
     }
-
-    // Type notifying that we can't find a given key
-    struct unknown_key
-    {
-      template<typename... T> unknown_key(T &&...) {}
-    };
 
     // Check if the key we used is correct
     template<typename T> inline constexpr bool is_unknown_v              = false;
@@ -248,7 +248,7 @@ namespace rbr
     }
 
     template<typename T>
-    constexpr bool operator[](flag_type<T> const &tgt) const noexcept
+    constexpr auto operator[](flag_type<T> const &tgt) const noexcept
     {
       return contains(tgt);
     }
@@ -294,6 +294,23 @@ namespace rbr
       return decltype(rbr::settings {std::declval<Args>()...})::validate(p);
     }
   };
+
+  // Traits to fetch type of an option from the type of a Settings
+  template<typename Settings, auto Keyword, typename Default = unknown_key>
+  struct get_type
+  {
+    using base = std::remove_cvref_t<decltype( std::declval<Settings>()[Keyword])>;
+    using type = std::conditional_t< std::same_as<base,unknown_key>, Default, base>;
+  };
+
+  template<typename Settings, auto Keyword>
+  struct get_type<Settings,Keyword>
+  {
+    using type = std::remove_cvref_t<decltype( std::declval<Settings>()[Keyword])>;
+  };
+
+  template<typename Settings, auto Keyword, typename Default = unknown_key>
+  using get_type_t = typename get_type<Settings,Keyword,Default>::type;
 }
 
 #undef RBR_FWD
