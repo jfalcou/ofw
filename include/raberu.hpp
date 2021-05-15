@@ -229,3 +229,5 @@ namespace rbr
     }
   };
 }
+
+#undef RBR_FWD

@@ -644,3 +644,5 @@ namespace std
   {
   };
 }
+
+#undef KUMI_FWD
