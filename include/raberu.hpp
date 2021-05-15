@@ -30,9 +30,14 @@ namespace rbr
   };
 
   // Turn any type into a RegularType info carrier
-  template<typename T, typename C = any_type> struct keyword_type
+  template<typename T, typename C = any_type> struct keyword_t
   {
-    using type                                  = keyword_type<T,C>;
+    using type  = keyword_t<T,C>;
+
+    constexpr keyword_t() =default;
+    constexpr keyword_t(T const&) {}
+    constexpr keyword_t(T const&, C const&) {}
+
     template<typename V>
     requires( C::template check<V>::value )
     constexpr auto operator=(V &&v) const noexcept;
@@ -42,27 +47,31 @@ namespace rbr
       return type_or_<type, V> {RBR_FWD(value)};
     }
 
-    template<typename U, typename K> constexpr auto operator|(keyword_type<U,K>) const noexcept
+    template<typename U, typename K> constexpr auto operator|(keyword_t<U,K>) const noexcept
     {
-      return either_<keyword_type<T,C>, keyword_type<U,K>> {};
+      return either_<keyword_t<T,C>, keyword_t<U,K>> {};
     }
 
     template<typename... Kws>
-    friend constexpr auto operator|(either_<Kws...>, keyword_type) noexcept
+    friend constexpr auto operator|(either_<Kws...>, keyword_t) noexcept
     {
-      return either_<Kws..., keyword_type<T,C>> {};
+      return either_<Kws..., keyword_t<T,C>> {};
     }
 
     template<typename... Kws>
-    friend constexpr auto operator|(keyword_type, either_<Kws...>) noexcept
+    friend constexpr auto operator|(keyword_t, either_<Kws...>) noexcept
     {
-      return either_<keyword_type<T,C>, Kws...> {};
+      return either_<keyword_t<T,C>, Kws...> {};
     }
   };
 
-  // Keyword_type generator
+  // CTAD for keyword_t
+  template<typename ID> keyword_t(ID const&) -> keyword_t<ID>;
+  template<typename ID, typename C> keyword_t(ID const&, C const&) -> keyword_t<ID,C>;
+
+  // keyword_t generator
   template<typename T, typename C = any_type>
-  inline constexpr const keyword_type<T,C> keyword = {};
+  inline constexpr const keyword_t<T,C> keyword = {};
 
   // Flag-like keyword parameter
   template<typename T> struct flag_type
@@ -70,6 +79,9 @@ namespace rbr
     static constexpr bool is_parameter_type     = true;
     using key_type                              = flag_type<T>;
     using type                                  = flag_type<T>;
+
+    constexpr flag_type() =default;
+    constexpr flag_type(T const&) {}
 
     template<typename V> constexpr auto operator|(V &&value) const noexcept
     {
@@ -96,15 +108,23 @@ namespace rbr
     constexpr std::true_type operator()(flag_type<T> const&) noexcept { return {}; }
   };
 
-  // Flag_type generator
+  // CTAD for flag_type
+  template<typename ID> flag_type(ID const&) -> flag_type<ID>;
+
+  // flag_type generator
   template<typename T> inline constexpr const flag_type<T> flag = {};
 
-  // Keyword/Flag-type user defined literals
+  // ID/Keyword/Flag-type user defined literals
   namespace literals
   {
     template<char... Char> struct id_
     {
     };
+
+    template<typename T, T... Chars> constexpr auto operator""_id() noexcept
+    {
+      return id_<Chars...>{};
+    }
 
     template<typename T, T... Chars> constexpr auto operator""_kw() noexcept
     {
@@ -171,7 +191,7 @@ namespace rbr
       using Ts::operator()...;
 
       template<typename K, typename C>
-      constexpr auto operator()(keyword_type<K,C> const &) const noexcept
+      constexpr auto operator()(keyword_t<K,C> const &) const noexcept
       {
         // If not found before, return the unknown_key value
         return unknown_key {};
@@ -189,20 +209,20 @@ namespace rbr
   template<typename T, typename C>
   template<typename V>
   requires( C::template check<V>::value )
-  constexpr auto keyword_type<T,C>::operator=(V &&v) const noexcept
+  constexpr auto keyword_t<T,C>::operator=(V &&v) const noexcept
   {
-    return detail::link<keyword_type<T,C>>(RBR_FWD(v));
+    return detail::link<keyword_t<T,C>>(RBR_FWD(v));
   }
 
   // Extract tag from an Option
   template<typename O> struct tag
   {
-    using type = keyword_type<O>;
+    using type = keyword_t<O>;
   };
 
-  template<typename O, typename C> struct tag<keyword_type<O,C>>
+  template<typename O, typename C> struct tag<keyword_t<O,C>>
   {
-    using type = keyword_type<O,C>;
+    using type = keyword_t<O,C>;
   };
 
   template<typename O> struct tag<flag_type<O>>
@@ -242,7 +262,7 @@ namespace rbr
 
     // Named options interface
     template<typename T, typename C>
-    static constexpr auto contains(keyword_type<T,C> const &) noexcept
+    static constexpr auto contains(keyword_t<T,C> const &) noexcept
     {
       using found = decltype(std::declval<parent>()(tag_t<T> {}));
       return std::bool_constant<!detail::is_unknown_v<found>>{};
@@ -255,7 +275,7 @@ namespace rbr
     }
 
     template<typename T, typename C>
-    constexpr decltype(auto) operator[](keyword_type<T,C> const &tgt) const noexcept
+    constexpr decltype(auto) operator[](keyword_t<T,C> const &tgt) const noexcept
     {
       return content_(tgt);
     }
@@ -282,9 +302,9 @@ namespace rbr
     }
 
     template<typename K, typename C>
-    static inline constexpr bool validate(keyword_type<K,C> const &) noexcept
+    static inline constexpr bool validate(keyword_t<K,C> const &) noexcept
     {
-      return (std::same_as<Ks, keyword_type<K>> && ... && true);
+      return (std::same_as<Ks, keyword_t<K>> && ... && true);
     }
 
     template<typename K> static inline constexpr bool validate(flag_type<K> const &) noexcept
