@@ -108,12 +108,12 @@ TTS_CASE("Check settings(...) operator[t | func()] constexpr behavior")
 {
   constexpr auto values  = rbr::settings(is_modal_,value_ = 1337.42f);
   auto           or_else = []<typename T>(rbr::keyword_type<T>) { return 42.69; };
+  auto           flag_it = []<typename T>(rbr::flag_type<T>) { return 42.69; };
 
-  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<char>   | or_else], 42.69);
-  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<double> | or_else], 42.69);
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<char>   | or_else], 42.69   );
+  TTS_CONSTEXPR_EQUAL(values[rbr::keyword<double> | or_else], 42.69   );
   TTS_CONSTEXPR_EQUAL(values[value_               | or_else], 1337.42f);
-  TTS_CONSTEXPR_EQUAL(values[custom_              | or_else], 42.69);
-
-  TTS_CONSTEXPR_EQUAL(values[is_modal_            | [](auto) { return 42ULL;  }], true  );
-  TTS_CONSTEXPR_EQUAL(values[is_transparent_      | [](auto) { return 13.37;  }], 13.37 );
+  TTS_CONSTEXPR_EQUAL(values[custom_              | or_else], 42.69   );
+  TTS_CONSTEXPR_EQUAL(values[is_modal_            | or_else], true    );
+  TTS_CONSTEXPR_EQUAL(values[is_transparent_      | flag_it], 42.69   );
 }
