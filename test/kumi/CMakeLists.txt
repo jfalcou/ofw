@@ -5,6 +5,7 @@
 ##==================================================================================================
 
 generate_test("kumi"  "access.cpp"          )
+generate_test("kumi"  "adapt.cpp"           )
 generate_test("kumi"  "aggregate_ctor.cpp"  )
 generate_test("kumi"  "apply.cpp"           )
 generate_test("kumi"  "cat.cpp"             )
