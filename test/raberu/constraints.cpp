@@ -20,8 +20,10 @@ struct small_type
   template<typename T> struct check : std::bool_constant<(sizeof(T) < 4)> {};
 };
 
-inline constexpr auto angle   = rbr::keyword<struct angle   , real_type >;
-inline constexpr auto pattern = rbr::keyword<struct pattern , small_type>;
+using namespace rbr::literals;
+
+inline constexpr auto angle              = rbr::keyword<struct angle   , real_type >;
+inline constexpr rbr::keyword_t pattern  = { "pattern"_id , small_type{} };
 
 TTS_CASE("Check constrainted keyword::operator= behavior")
 {
