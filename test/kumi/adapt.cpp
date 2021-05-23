@@ -1,7 +1,7 @@
 //==================================================================================================
 /**
-  RABERU - Fancy Parameters Library
-  Copyright : RABERU Contributors & Maintainers
+  KUMI - Compact Tuple Tools
+  Copyright : KUMI Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================
@@ -12,15 +12,10 @@
 
 // --
 // -- Adapt a non-modifiable type
+// -- std::array already is already set for structured bindings so we just need to opt-in
 // --
 template<typename T, std::size_t N>
 struct kumi::is_product_type<std::array<T,N>> : std::true_type {};
-
-template<typename T, std::size_t N>
-struct kumi::size<std::array<T,N> > : std::integral_constant<std::size_t,N> {};
-
-// std::array already has a get()
-// --
 
 // --
 // -- Make a pre adapted type
@@ -32,8 +27,6 @@ struct some_box
   int i;
   float f;
   char c;
-
-  static constexpr std::size_t size() noexcept { return 3; }
 
   template<std::size_t I>
   friend constexpr auto const& get(some_box const& s) noexcept requires(I < 3)

@@ -1,7 +1,7 @@
 //==================================================================================================
 /**
-  RABERU - Fancy Parameters Library
-  Copyright : RABERU Contributors & Maintainers
+  KUMI - Compact Tuple Tools
+  Copyright : KUMI Contributors & Maintainers
   SPDX-License-Identifier: MIT
 **/
 //==================================================================================================
