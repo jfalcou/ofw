@@ -225,6 +225,36 @@ namespace kumi
   }
 
   //================================================================================================
+  // Transform a product_type type via a meta-function
+  //================================================================================================
+  namespace detail
+  {
+    template<typename T> struct box {};
+
+    template<template<typename...> class Meta, product_type T>
+    constexpr auto meta_map(box<T>)
+    {
+      return []<std::size_t... I>( std::index_sequence<I...> )
+      {
+        return kumi::tuple{ typename Meta
+                            <
+                              std::remove_cvref_t<decltype( get<I>(std::declval<T>()) )>
+                            >::type{}...
+                          };
+      }( std::make_index_sequence<kumi::size<T>::value>{});
+    }
+  }
+
+  template<template<typename...> class Meta, product_type T>
+  struct remap_type
+  {
+    using type = decltype( detail::meta_map<Meta>(detail::box<T>{}) );
+  };
+
+  template<template<typename...> class Meta, product_type T>
+  using remap_type_t = typename remap_type<Meta, T>::type;
+
+  //================================================================================================
   // Pass every elements of the tuple to f
   //================================================================================================
   template<typename Function, product_type Tuple>
