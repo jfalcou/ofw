@@ -44,7 +44,20 @@ struct some_box
     if constexpr(I==2) return s.c;
   }
 };
+
+template<> struct std::tuple_size<some_box> : std::integral_constant<std::size_t,3> {};
+template<> struct std::tuple_element<0,some_box> { using type = int;   };
+template<> struct std::tuple_element<1,some_box> { using type = float; };
+template<> struct std::tuple_element<2,some_box> { using type = char;  };
+
 // --
+
+TTS_CASE("Check adapted types model kumi::product_type concept")
+{
+  TTS_EXPECT    ( kumi::product_type<some_box>              );
+  TTS_EXPECT    ( (kumi::product_type<std::array<int,4>>   ));
+  TTS_EXPECT_NOT( (kumi::product_type<std::pair<int,float>>));
+}
 
 TTS_CASE("Check adapted type behave like a product_type")
 {
