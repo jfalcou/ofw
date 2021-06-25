@@ -264,24 +264,41 @@ namespace kumi
   //================================================================================================
   // Apply f to each element of tuple and returns a continuation
   //================================================================================================
-  template<typename Function, product_type Tuple>
-  constexpr void for_each(Function f, Tuple &&t) requires detail::applicable<Function, Tuple>
+  template<typename Function, product_type Tuple, product_type... Tuples>
+  constexpr void for_each(Function f, Tuple&& t, Tuples&&... ts)
+  requires detail::applicable<Function, Tuple, Tuples...>
   {
-    [&]<std::size_t... I>(std::index_sequence<I...>) { (f(get<I>(KUMI_FWD(t))), ...); }
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      // clang needs this for some reason
+      using std::get;
+      [[maybe_unused]] auto call = [&]<typename M>(M)
+                                      { f ( get<M::value>(KUMI_FWD(t))
+                                          , get<M::value>(KUMI_FWD(ts))...
+                                          );
+                                      };
+
+      ( call(std::integral_constant<std::size_t, I>{}), ... );
+    }
     (std::make_index_sequence<size<Tuple>::value>());
   }
 
-  template<typename Function, product_type Tuple>
-  constexpr void for_each_index(Function f, Tuple &t)
+  template<typename Function, product_type Tuple, product_type... Tuples>
+  constexpr void for_each_index(Function f, Tuple&& t, Tuples&&... ts)
   {
-    [&]<std::size_t... I>(std::index_sequence<I...>) { (f(index<I>, get<I>(t)), ...); }
-    (std::make_index_sequence<size<Tuple>::value>());
-  }
+    [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+      // clang needs this for some reason
+      using std::get;
+      [[maybe_unused]] auto call = [&]<typename M>(M idx)
+                                      { f ( idx
+                                          , get<M::value>(KUMI_FWD(t))
+                                          , get<M::value>(KUMI_FWD(ts))...
+                                          );
+                                      };
 
-  template<typename Function, product_type Tuple>
-  constexpr void for_each_index(Function f, Tuple const &t)
-  {
-    [&]<std::size_t... I>(std::index_sequence<I...>) { (f(index<I>, get<I>(t)), ...); }
+      ( call(std::integral_constant<std::size_t, I>{}), ... );
+    }
     (std::make_index_sequence<size<Tuple>::value>());
   }
 
