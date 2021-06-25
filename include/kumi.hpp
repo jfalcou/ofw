@@ -7,7 +7,6 @@
 //==================================================================================================
 #pragma once
 #include <iosfwd>
-#include <iostream>
 #include <utility>
 
 #if defined(__clang__)
@@ -219,7 +218,7 @@ namespace kumi
   template<std::size_t I, product_type T> using  element_t = typename element<I,T>::type;
 
   //================================================================================================
-  // KUMI memebr type access - Type returned by a call to get<I>(T) with al qualifiers
+  // KUMI member type access - Type returned by a call to get<I>(T) with al qualifiers
   //================================================================================================
   template<std::size_t I, product_type T> struct member
   {
@@ -697,6 +696,45 @@ namespace kumi
   {
     return kumi::make_tuple(KUMI_FWD(t)[index<Idx>]...);
   }
+
+  //================================================================================================
+  // Traits for manipulating tuple
+  //================================================================================================
+  namespace detail
+  {
+    template< product_type Tuple
+            , typename IndexSequence
+            , template<typename...> class Meta = std::type_identity
+            >
+    struct as_tuple;
+
+    template< product_type Tuple
+            , std::size_t... I
+            >
+    struct as_tuple<Tuple, std::index_sequence<I...>>
+    {
+      using type = kumi::tuple< element_t<I,Tuple>... >;
+    };
+
+    template< product_type Tuple
+            , std::size_t... I
+            , template<typename...> class Meta
+            >
+    struct as_tuple<Tuple, std::index_sequence<I...>, Meta>
+    {
+      using type = kumi::tuple< typename Meta<element_t<I,Tuple>>::type... >;
+    };
+  }
+
+  template<product_type Tuple, template<typename...> class Meta = std::type_identity>
+  struct as_tuple : detail::as_tuple< Tuple
+                                    , std::make_index_sequence<kumi::size<Tuple>::value>
+                                    , Meta
+                                    >
+  {};
+
+  template<product_type Tuple, template<typename...> class Meta = std::type_identity>
+  using as_tuple_t =  typename as_tuple<Tuple, Meta>::type;
 }
 
 #undef KUMI_FWD
