@@ -7,7 +7,6 @@
 //==================================================================================================
 #pragma once
 #include <iosfwd>
-#include <iostream>
 #include <utility>
 
 #if defined(__clang__)
@@ -149,22 +148,27 @@ namespace kumi
   };
 
   template<typename T> struct size;
-  template<typename T> struct size<T &> : size<T>
-  {
-  };
-  template<typename T> struct size<T const> : size<T>
-  {
-  };
-  template<typename T> struct size<T const &> : size<T>
+  template<typename T> struct size<T &>         : size<T> {};
+  template<typename T> struct size<T &&>        : size<T> {};
+  template<typename T> struct size<T const>     : size<T> {};
+  template<typename T> struct size<T const &>   : size<T> {};
+  template<typename T> struct size<T const &&>  : size<T> {};
+
+  // We can adapt type through std::tuple_size
+  template<typename T> requires requires(T) { typename std::tuple_size<T>::type; }
+  struct size<T> : std::tuple_size<T>
   {
   };
 
-  template<typename T> requires requires(T) { T::size(); }
-  struct size<T> : std::integral_constant<std::size_t, T::size()>
+  template<typename T> concept std_tuple_compatible = requires( T t )
   {
+    typename std::tuple_element<0,std::remove_cvref_t<T>>::type;
+    { get<0>(t) };
   };
 
-  template<typename T> concept product_type = is_product_type<std::remove_cvref_t<T>>::value;
+  template<typename T>
+  concept product_type =    (is_product_type<std::remove_cvref_t<T>>::value && std_tuple_compatible<T>)
+                        ||  (size<T>::value == 0);
 
   template<typename T, std::size_t N>
   concept sized_product_type = product_type<T> && (size<T>::value == N);
@@ -204,12 +208,32 @@ namespace std
 namespace kumi
 {
   //================================================================================================
+  // KUMI element type access - Rip straight from the definition
+  //================================================================================================
+  template<std::size_t I, product_type T> struct element              : std::tuple_element<I,T> {};
+  template<std::size_t I, product_type T> struct element<I,T&>        : element<I,T> {};
+  template<std::size_t I, product_type T> struct element<I,T&&>       : element<I,T> {};
+  template<std::size_t I, product_type T> struct element<I,T const&>  : element<I,T> {};
+  template<std::size_t I, product_type T> struct element<I,T const&&> : element<I,T> {};
+  template<std::size_t I, product_type T> using  element_t = typename element<I,T>::type;
+
+  //================================================================================================
+  // KUMI member type access - Type returned by a call to get<I>(T) with al qualifiers
+  //================================================================================================
+  template<std::size_t I, product_type T> struct member
+  {
+    using type = decltype( get<I>(std::declval<T&>()));
+  };
+
+  template<std::size_t I, product_type T> using  member_t = typename member<I,T>::type;
+
+  //================================================================================================
   // Concept machinery to make our algorithms SFINAE friendly
   //================================================================================================
   namespace detail
   {
     template<typename F, size_t I, typename... Tuples>
-    concept applicable_i = std::is_invocable_v<F, decltype(get<I>(std::declval<Tuples &>()))...>;
+    concept applicable_i = std::is_invocable_v<F, member_t<I,Tuples>...>;
 
     template<typename F, typename Indices, typename... Tuples> struct is_applicable;
 
@@ -661,7 +685,7 @@ namespace kumi
 
       return kumi::make_tuple(uz(index_t<I> {}, t)...);
     }
-    (std::make_index_sequence<size<decltype(get<0>(t))>::value>());
+    (std::make_index_sequence<size<element_t<0,Tuple>>::value>());
   }
 
   //================================================================================================
@@ -672,6 +696,45 @@ namespace kumi
   {
     return kumi::make_tuple(KUMI_FWD(t)[index<Idx>]...);
   }
+
+  //================================================================================================
+  // Traits for manipulating tuple
+  //================================================================================================
+  namespace detail
+  {
+    template< product_type Tuple
+            , typename IndexSequence
+            , template<typename...> class Meta = std::type_identity
+            >
+    struct as_tuple;
+
+    template< product_type Tuple
+            , std::size_t... I
+            >
+    struct as_tuple<Tuple, std::index_sequence<I...>>
+    {
+      using type = kumi::tuple< element_t<I,Tuple>... >;
+    };
+
+    template< product_type Tuple
+            , std::size_t... I
+            , template<typename...> class Meta
+            >
+    struct as_tuple<Tuple, std::index_sequence<I...>, Meta>
+    {
+      using type = kumi::tuple< typename Meta<element_t<I,Tuple>>::type... >;
+    };
+  }
+
+  template<product_type Tuple, template<typename...> class Meta = std::type_identity>
+  struct as_tuple : detail::as_tuple< Tuple
+                                    , std::make_index_sequence<kumi::size<Tuple>::value>
+                                    , Meta
+                                    >
+  {};
+
+  template<product_type Tuple, template<typename...> class Meta = std::type_identity>
+  using as_tuple_t =  typename as_tuple<Tuple, Meta>::type;
 }
 
 #undef KUMI_FWD
