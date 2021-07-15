@@ -53,11 +53,11 @@ TTS_CASE("Check as_tuple behavior")
   TTS_TYPE_IS( (kumi::as_tuple_t<kumi::tuple<int,char>>), (kumi::tuple<int,char>));
   TTS_TYPE_IS( (kumi::as_tuple_t<std::tuple<int,char>>) , (kumi::tuple<int,char>));
   TTS_TYPE_IS( (kumi::as_tuple_t<some_box>) , (kumi::tuple<int,float,char>));
-}
+};
 
 TTS_CASE("Check as_tuple behavior with traits")
 {
   TTS_TYPE_IS( (kumi::as_tuple_t<kumi::tuple<int,char>, std::add_pointer>), (kumi::tuple<int*,char*>));
   TTS_TYPE_IS( (kumi::as_tuple_t<std::tuple<int,char>, std::add_pointer>) , (kumi::tuple<int*,char*>));
   TTS_TYPE_IS( (kumi::as_tuple_t<some_box, std::add_pointer>) , (kumi::tuple<int*,float*,char*>));
-}
+};

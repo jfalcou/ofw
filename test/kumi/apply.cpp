@@ -29,7 +29,7 @@ TTS_CASE("Check apply behavior")
               return s.str();
             })),
             "1 5 things ");
-}
+};
 
 TTS_CASE("Check apply constexpr behavior")
 {
@@ -45,4 +45,4 @@ TTS_CASE("Check apply constexpr behavior")
 
   TTS_CONSTEXPR_EQUAL(t1, 6.);
   TTS_CONSTEXPR_EQUAL(t2, 6.);
-}
+};

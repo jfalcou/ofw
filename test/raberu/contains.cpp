@@ -30,7 +30,7 @@ TTS_CASE("Check settings(...).contains behavior")
   TTS_EXPECT_NOT(values.contains(rbr::keyword<void *> ));
   TTS_EXPECT_NOT(values.contains(is_modal_            ));
   TTS_EXPECT_NOT(values.contains("compact"_fl         ));
-}
+};
 
 TTS_CASE("Check settings(...).contains constexpr behavior")
 {
@@ -48,4 +48,4 @@ TTS_CASE("Check settings(...).contains constexpr behavior")
   TTS_CONSTEXPR_EXPECT_NOT(values.contains(rbr::keyword<short>)   );
   TTS_CONSTEXPR_EXPECT_NOT(values.contains(rbr::keyword<void *> ) );
   TTS_CONSTEXPR_EXPECT_NOT(values.contains(is_transparent_  )     );
-}
+};

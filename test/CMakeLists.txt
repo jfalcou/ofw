@@ -20,24 +20,9 @@ else()
 endif()
 
 target_include_directories( ofw_test INTERFACE
-                            ${tts_SOURCE_DIR}/include
                             ${PROJECT_SOURCE_DIR}/test
                             ${PROJECT_SOURCE_DIR}/include
                           )
-
-##==================================================================================================
-## Setup TTS
-##==================================================================================================
-set(TTS_BUILD_TEST    OFF CACHE INTERNAL "OFF")
-set(TTS_IS_DEPENDENT  ON  CACHE INTERNAL "ON")
-
-include(FetchContent)
-FetchContent_Declare( tts
-                      GIT_REPOSITORY https://github.com/jfalcou/tts.git
-                      GIT_TAG develop
-                    )
-
-FetchContent_MakeAvailable(tts)
 
 ##==================================================================================================
 ## Make test
@@ -72,13 +57,6 @@ function(generate_test root file)
                           EXCLUDE_FROM_ALL TRUE
                           ${MAKE_UNIT_TARGET_PROPERTIES}
                         )
-
-  target_include_directories( ${test}
-                              PRIVATE
-                              ${tts_SOURCE_DIR}/include
-                              ${PROJECT_SOURCE_DIR}/test
-                              ${PROJECT_SOURCE_DIR}/include
-                            )
 
   add_dependencies(unit ${test})
 endfunction()

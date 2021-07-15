@@ -57,7 +57,7 @@ TTS_CASE("Check adapted types model kumi::product_type concept")
   TTS_EXPECT    ( kumi::product_type<some_box>              );
   TTS_EXPECT    ( (kumi::product_type<std::array<int,4>>   ));
   TTS_EXPECT_NOT( (kumi::product_type<std::pair<int,float>>));
-}
+};
 
 TTS_CASE("Check adapted type behave like a product_type")
 {
@@ -73,7 +73,7 @@ TTS_CASE("Check adapted type behave like a product_type")
 
   auto cc = kumi::cat( some_box{1,2.5,'4'}, some_box{99,69.25,'Z'});
   TTS_EQUAL ( cc, ( kumi::tuple {1, 2.5, '4', 99, 69.25, 'Z'}) );
-}
+};
 
 TTS_CASE("Check adapted external type behave like a product_type")
 {
@@ -89,4 +89,4 @@ TTS_CASE("Check adapted external type behave like a product_type")
 
   auto cc = kumi::cat( std::array{1,2,5}, std::array{0.1,2.3,4.5} );
   TTS_EQUAL ( cc, ( kumi::tuple {1, 2, 5, 0.1, 2.3, 4.5}) );
-}
+};

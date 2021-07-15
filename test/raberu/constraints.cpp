@@ -31,4 +31,4 @@ TTS_CASE("Check constrainted keyword::operator= behavior")
 
   TTS_EQUAL( s[angle]   , 3.  );
   TTS_EQUAL( s[pattern] , 'z' );
-}
+};

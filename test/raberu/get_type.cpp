@@ -22,7 +22,7 @@ TTS_CASE("Check get_type<S,K> behavior")
   TTS_TYPE_IS( (rbr::get_type_t<options_t, value_   >), float            );
   TTS_TYPE_IS( (rbr::get_type_t<options_t, is_modal_>), std::true_type   );
   TTS_TYPE_IS( (rbr::get_type_t<options_t, "flop"_kw>), rbr::unknown_key );
-}
+};
 
 TTS_CASE("Check get_type<S,K,O> behavior")
 {
@@ -36,4 +36,4 @@ TTS_CASE("Check get_type<S,K,O> behavior")
   TTS_TYPE_IS( (rbr::get_type_t<options_t, value_   , void*>), float          );
   TTS_TYPE_IS( (rbr::get_type_t<options_t, is_modal_, void*>), std::true_type );
   TTS_TYPE_IS( (rbr::get_type_t<options_t, "flop"_kw, void*>), void*          );
-}
+};

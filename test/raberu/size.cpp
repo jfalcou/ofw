@@ -16,7 +16,7 @@ TTS_CASE("Check settings(...) size - simple parameters")
   TTS_EQUAL(rbr::settings(1).size(), 1);
   TTS_EQUAL(rbr::settings(2, 1.f).size(), 2);
   TTS_EQUAL(rbr::settings("3", 2, 1.f).size(), 3);
-}
+};
 
 TTS_CASE("Check settings(...) size - named parameters")
 {
@@ -30,7 +30,7 @@ TTS_CASE("Check settings(...) size - named parameters")
   TTS_EQUAL(rbr::settings("custom"_kw = foo {}).size(), 1);
   TTS_EQUAL(rbr::settings("custom"_kw = foo {}, "value"_kw = 3.f).size(), 2);
   TTS_EQUAL(rbr::settings("custom"_kw = foo {}, "name"_kw = "john"s, "value"_kw = 3.f).size(), 3);
-}
+};
 
 TTS_CASE("Check settings(...) constexpr size - simple parameters")
 {
@@ -38,7 +38,7 @@ TTS_CASE("Check settings(...) constexpr size - simple parameters")
   TTS_CONSTEXPR_EQUAL(rbr::settings(1).size(), 1);
   TTS_CONSTEXPR_EQUAL(rbr::settings(2, 1.f).size(), 2);
   TTS_CONSTEXPR_EQUAL(rbr::settings("3", 2, 1.f).size(), 3);
-}
+};
 
 TTS_CASE("Check settings(...) constexpr size - named parameters")
 {
@@ -53,4 +53,4 @@ TTS_CASE("Check settings(...) constexpr size - named parameters")
   TTS_CONSTEXPR_EQUAL(rbr::settings("custom"_kw = foo {}, "value"_kw = 3.f).size(), 2);
   TTS_CONSTEXPR_EQUAL(
       rbr::settings("custom"_kw = foo {}, "coord"_kw = point {}, "value"_kw = 3.f).size(), 3);
-}
+};
