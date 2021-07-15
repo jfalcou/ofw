@@ -17,7 +17,7 @@ TTS_CASE("Check cat(tuple) behavior")
   TTS_EQUAL((cat(kumi::tuple {1, 2.}, kumi::tuple {3.f, 4})), (kumi::tuple {1, 2., 3.f, 4}));
   TTS_EQUAL((cat(kumi::tuple {1, 2.}, kumi::tuple {3.f, 4}, kumi::tuple {s, 6.7})),
             (kumi::tuple {1, 2., 3.f, 4, s, 6.7}));
-}
+};
 
 TTS_CASE("Check cat(tuple) constexpr behavior")
 {
@@ -29,7 +29,7 @@ TTS_CASE("Check cat(tuple) constexpr behavior")
                       (kumi::tuple {1, 2., 3.f, 4}));
   TTS_CONSTEXPR_EQUAL((cat(kumi::tuple {1, 2.}, kumi::tuple {3.f, 4}, kumi::tuple {s, 6.7})),
                       (kumi::tuple {1, 2., 3.f, 4, s, 6.7}));
-}
+};
 
 TTS_CASE("Check t0 | ... | tn behavior")
 {
@@ -39,7 +39,7 @@ TTS_CASE("Check t0 | ... | tn behavior")
   TTS_EQUAL((kumi::tuple {1, 2.} | kumi::tuple {3.f, 4}), (kumi::tuple {1, 2., 3.f, 4}));
   TTS_EQUAL((kumi::tuple {1, 2.} | kumi::tuple {3.f, 4} | kumi::tuple {s, 6.7}),
             (kumi::tuple {1, 2., 3.f, 4, s, 6.7}));
-}
+};
 
 TTS_CASE("Check t0 | ... | tn constexpr behavior")
 {
@@ -49,4 +49,4 @@ TTS_CASE("Check t0 | ... | tn constexpr behavior")
   TTS_CONSTEXPR_EQUAL((kumi::tuple {1, 2.} | kumi::tuple {3.f, 4}), (kumi::tuple {1, 2., 3.f, 4}));
   TTS_CONSTEXPR_EQUAL((kumi::tuple {1, 2.} | kumi::tuple {3.f, 4} | kumi::tuple {s, 6.7}),
                       (kumi::tuple {1, 2., 3.f, 4, s, 6.7}));
-}
+};

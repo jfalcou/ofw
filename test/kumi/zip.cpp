@@ -26,7 +26,7 @@ TTS_CASE("Check tuple::zip behavior")
       (kumi::zip(numbers, letters, ratio)),
       (tuple {
           tuple {1, 'a', 1.f}, tuple {2, 'b', 0.5f}, tuple {3, 'c', 0.25}, tuple {4, 'd', 0.01}}));
-}
+};
 
 TTS_CASE("Check tuple::zip constexpr behavior")
 {
@@ -43,4 +43,4 @@ TTS_CASE("Check tuple::zip constexpr behavior")
       (kumi::zip(numbers, letters, ratio)),
       (tuple {
           tuple {1, 'a', 1.f}, tuple {2, 'b', 0.5f}, tuple {3, 'c', 0.25}, tuple {4, 'd', 0.01}}));
-}
+};

@@ -20,7 +20,7 @@ TTS_CASE("Check settings(...) operator[t] behavior")
   TTS_EQUAL(values[coord_]              , "Jane Doe"s );
   TTS_EQUAL(values[is_modal_]           , true        );
   TTS_EQUAL(values[is_transparent_]     , false       );
-}
+};
 
 TTS_CASE("Check settings(...) operator[t] life-time handling")
 {
@@ -33,7 +33,7 @@ TTS_CASE("Check settings(...) operator[t] life-time handling")
 
   TTS_EQUAL(&values[rbr::keyword<float>], &f);
   TTS_EQUAL(&values[coord_], &s);
-}
+};
 
 TTS_CASE("Check settings(...) operator[t] constexpr behavior")
 {
@@ -43,7 +43,7 @@ TTS_CASE("Check settings(...) operator[t] constexpr behavior")
   TTS_CONSTEXPR_EQUAL(values[coord_]              , 75ULL );
   TTS_CONSTEXPR_EQUAL(values[is_transparent_]     , true  );
   TTS_CONSTEXPR_EQUAL(values[is_modal_]           , false );
-}
+};
 
 TTS_CASE("Check settings(...) operator[t | v] behavior")
 {
@@ -58,7 +58,7 @@ TTS_CASE("Check settings(...) operator[t | v] behavior")
   TTS_EQUAL(values[name_ | -99], "Jane Doe"s);
   TTS_EQUAL(values["default_init"_fl | -99], true);
   TTS_EQUAL(values["perform_copy"_fl | -99], -99);
-}
+};
 
 TTS_CASE("Check settings(...) operator[t | v] life-time handling")
 {
@@ -73,7 +73,7 @@ TTS_CASE("Check settings(...) operator[t | v] life-time handling")
   TTS_EQUAL(&values[rbr::keyword<float> | 13.37f], &f);
   TTS_EQUAL(&values[coord_ | "test"s], &s);
   TTS_EQUAL(&values[name_ | alt], &alt);
-}
+};
 
 TTS_CASE("Check settings(...) operator[t | v] constexpr behavior")
 {
@@ -87,8 +87,7 @@ TTS_CASE("Check settings(...) operator[t | v] constexpr behavior")
   TTS_CONSTEXPR_EQUAL(values[coord_ | -99], 75ULL);
   TTS_CONSTEXPR_EQUAL(values["default_init"_fl | -99], true);
   TTS_CONSTEXPR_EQUAL(values["perform_copy"_fl | -99], -99);
-
-}
+};
 
 TTS_CASE("Check settings(...) operator[t | func()] behavior")
 {
@@ -102,7 +101,7 @@ TTS_CASE("Check settings(...) operator[t | func()] behavior")
   TTS_EQUAL(values[coord_               | [](auto) { return 42ULL;  }], 42ULL   );
   TTS_EQUAL(values[is_modal_            | [](auto) { return 42ULL;  }], true    );
   TTS_EQUAL(values[is_transparent_      | [](auto) { return "oops"; }], "oops"  );
-}
+};
 
 TTS_CASE("Check settings(...) operator[t | func()] constexpr behavior")
 {
@@ -116,4 +115,4 @@ TTS_CASE("Check settings(...) operator[t | func()] constexpr behavior")
   TTS_CONSTEXPR_EQUAL(values[custom_              | or_else], 42.69   );
   TTS_CONSTEXPR_EQUAL(values[is_modal_            | or_else], true    );
   TTS_CONSTEXPR_EQUAL(values[is_transparent_      | flag_it], 42.69   );
-}
+};

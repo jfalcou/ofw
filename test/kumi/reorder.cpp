@@ -69,8 +69,7 @@ TTS_CASE("Check reorder<I...>(tuple) behavior")
       TTS_EQUAL(s, (kumi::tuple{1,2.,3.4f,'5',3.4f,2.,1}) );
     }
   }
-}
-
+};
 
 TTS_CASE("Check reorder<I...>(tuple) constexpr behavior")
 {
@@ -132,4 +131,4 @@ TTS_CASE("Check reorder<I...>(tuple) constexpr behavior")
       TTS_CONSTEXPR_EQUAL(s, (kumi::tuple{1,2.,3.4f,'5',3.4f,2.,1}) );
     }
   }
-}
+};

@@ -137,7 +137,7 @@ TTS_CASE("Check tuple::extract behavior")
       TTS_EQUAL(sub, kumi::tuple {});
     }
   }
-}
+};
 
 TTS_CASE("Check tuple::extract constexpr behavior")
 {
@@ -267,4 +267,4 @@ TTS_CASE("Check tuple::extract constexpr behavior")
       TTS_CONSTEXPR_EQUAL(sub, kumi::tuple {});
     }
   }
-}
+};

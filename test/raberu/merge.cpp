@@ -31,7 +31,7 @@ TTS_CASE("Check merge behavior: large defaults, few options")
   TTS_EQUAL(merged2[factor_]   , 42.69f      );
   TTS_EQUAL(merged2[coord_]    , "Jane Doe"s );
   TTS_EQUAL(merged2[is_modal_] , true        );
-}
+};
 
 TTS_CASE("Check merge behavior: few defaults, large options")
 {
@@ -54,4 +54,4 @@ TTS_CASE("Check merge behavior: few defaults, large options")
   TTS_EQUAL(merged2[value_]    , 13.37       );
   TTS_EQUAL(merged2[coord_]    , "Jane Doe"s );
   TTS_EQUAL(merged2[is_modal_] , true        );
-}
+};

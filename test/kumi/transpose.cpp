@@ -21,7 +21,7 @@ TTS_CASE("Check tuple::transpose behavior")
 
   TTS_EQUAL((kumi::transpose(tuple{ numbers, letters, ratio })),
             (tuple {tuple {1, 'a' , 1.f}, tuple {2, 'b',0.1f}, tuple {3, 'c',0.01f}, tuple {4, 'd',0.001f}}));
-}
+};
 
 TTS_CASE("Check constexpr tuple::transpose behavior")
 {
@@ -33,4 +33,4 @@ TTS_CASE("Check constexpr tuple::transpose behavior")
 
   TTS_CONSTEXPR_EQUAL((kumi::transpose(tuple{ numbers, letters, ratio })),
             (tuple {tuple {1, 'a' , 1.f}, tuple {2, 'b',0.1f}, tuple {3, 'c',0.01f}, tuple {4, 'd',0.001f}}));
-}
+};
