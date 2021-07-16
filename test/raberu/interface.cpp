@@ -10,64 +10,65 @@
 #include <raberu.hpp>
 #include <tts/tts.hpp>
 
-template<typename... Vs>
-constexpr auto typed_interface(Vs const &...vs) noexcept
-{
-  rbr::settings s(vs...);
-  return s[rbr::keyword<int>] * s[rbr::keyword<double>];
-}
-
 constexpr auto
-named_interface(rbr::keyword_parameter auto const &...vs) noexcept
+named_interface(rbr::concepts::option auto const &...vs) noexcept
 {
   rbr::settings s(vs...);
-  return s[factor_] * s[ref_];
+  return s["level"_kw] * s[value_];
 }
 
-template<rbr::keyword_parameter... Vs>
+template<rbr::concepts::option... Vs>
+constexpr auto filtered_interface(Vs const &...vs) noexcept
+requires( rbr::settings<Vs...>::contains_any("level"_kw, value_) )
+{
+  rbr::settings s(vs...);
+  return s["level"_kw] * s[value_];
+}
+
+template<rbr::concepts::option... Vs>
 constexpr auto restricted_interface(Vs const &...vs) noexcept
-requires( rbr::match<Vs...>::with(factor_ | ref_ | is_modal_) )
+requires( rbr::settings<Vs...>::contains_only("level"_kw, value_) )
 {
   rbr::settings s(vs...);
-  return s[factor_] * s[ref_];
+  return s["level"_kw] * s[value_];
 }
-
-TTS_CASE("Check settings(...) as function interface with simple parameters")
-{
-  TTS_EQUAL(typed_interface(10, 3.41), 34.1);
-  TTS_EQUAL(typed_interface(3.41, 10), 34.1);
-};
 
 TTS_CASE("Check settings(...) as function interface with named parameters")
 {
-  TTS_EQUAL(named_interface(factor_ = 10, ref_ = 3.41), 34.1);
-  TTS_EQUAL(named_interface(ref_ = 3.41, factor_ = 10), 34.1);
-};
-
-TTS_CASE("Check settings(...) as function interface with restricted named parameters")
-{
-  TTS_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41), 34.1);
-  TTS_EQUAL(restricted_interface(ref_ = 3.41, factor_ = 10), 34.1);
-  TTS_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41, is_modal_), 34.1);
-  TTS_EQUAL(restricted_interface(factor_ = 10, is_modal_, ref_ = 3.41), 34.1);
-};
-
-TTS_CASE("Check settings(...) as constexpr function interface with simple parameters")
-{
-  TTS_CONSTEXPR_EQUAL(typed_interface(10, 3.41), 34.1);
-  TTS_CONSTEXPR_EQUAL(typed_interface(3.41, 10), 34.1);
+  TTS_EQUAL(named_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_EQUAL(named_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
 };
 
 TTS_CASE("Check settings(...) as constexpr function interface with named parameters")
 {
-  TTS_CONSTEXPR_EQUAL(named_interface(factor_ = 10, ref_ = 3.41), 34.1);
-  TTS_CONSTEXPR_EQUAL(named_interface(ref_ = 3.41, factor_ = 10), 34.1);
+  TTS_CONSTEXPR_EQUAL(named_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_CONSTEXPR_EQUAL(named_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
+};
+
+TTS_CASE("Check settings(...) as function interface with filtered named parameters")
+{
+  TTS_EQUAL(filtered_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_EQUAL(filtered_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
+  TTS_EQUAL(filtered_interface("level"_kw = 10, value_ = 3.4f, is_modal_), 34.f);
+  TTS_EQUAL(filtered_interface("level"_kw = 10, is_modal_, value_ = 3.4f), 34.f);
+};
+
+TTS_CASE("Check settings(...) as constexpr function interface with filtered named parameters")
+{
+  TTS_CONSTEXPR_EQUAL(filtered_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_CONSTEXPR_EQUAL(filtered_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
+  TTS_CONSTEXPR_EQUAL(filtered_interface("level"_kw = 10, value_ = 3.4f, is_modal_), 34.f);
+  TTS_CONSTEXPR_EQUAL(filtered_interface("level"_kw = 10, is_modal_, value_ = 3.4f), 34.f);
+};
+
+TTS_CASE("Check settings(...) as function interface with restricted named parameters")
+{
+  TTS_EQUAL(restricted_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_EQUAL(restricted_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
 };
 
 TTS_CASE("Check settings(...) as constexpr function interface with restricted named parameters")
 {
-  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41), 34.1);
-  TTS_CONSTEXPR_EQUAL(restricted_interface(ref_ = 3.41, factor_ = 10), 34.1);
-  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, ref_ = 3.41, is_modal_), 34.1);
-  TTS_CONSTEXPR_EQUAL(restricted_interface(factor_ = 10, is_modal_, ref_ = 3.41), 34.1);
+  TTS_CONSTEXPR_EQUAL(restricted_interface("level"_kw = 10, value_ = 3.4f), 34.f);
+  TTS_CONSTEXPR_EQUAL(restricted_interface(value_ = 3.4f, "level"_kw = 10), 34.f);
 };

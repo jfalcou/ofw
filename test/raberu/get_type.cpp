@@ -15,7 +15,7 @@ TTS_CASE("Check get_type<S,K> behavior")
   using namespace std::literals;
   using namespace rbr::literals;
 
-  auto values     = rbr::settings(coord_ = "Jane Doe"s, 42.69f, is_modal_);
+  auto values     = rbr::settings(coord_ = "Jane Doe"s, value_ = 42.69f, is_modal_);
   using options_t = decltype(values);
 
   TTS_TYPE_IS( (rbr::get_type_t<options_t, coord_   >), std::string      );
@@ -29,7 +29,7 @@ TTS_CASE("Check get_type<S,K,O> behavior")
   using namespace std::literals;
   using namespace rbr::literals;
 
-  auto values     = rbr::settings(coord_ = "Jane Doe"s, 42.69f, is_modal_);
+  auto values     = rbr::settings(coord_ = "Jane Doe"s, value_ = 42.69f, is_modal_);
   using options_t = decltype(values);
 
   TTS_TYPE_IS( (rbr::get_type_t<options_t, coord_   , void*>), std::string    );

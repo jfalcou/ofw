@@ -10,16 +10,46 @@
 #include <raberu.hpp>
 #include <tts/tts.hpp>
 
-TTS_CASE("Check rbr::keyword_parameters concept")
+TTS_CASE("Check rbr::concepts::keyword concept")
 {
   using namespace rbr::literals;
 
-  auto param = (coord_ = 9);
+  // Direct type
+  TTS_EXPECT(   rbr::concepts::keyword< rbr::flag_keyword   <struct key>            > );
+  TTS_EXPECT(   rbr::concepts::keyword< rbr::any_keyword    <struct key>            > );
+  TTS_EXPECT( ( rbr::concepts::keyword< rbr::typed_keyword  <struct key, double>    >));
+  TTS_EXPECT( ( rbr::concepts::keyword< rbr::checked_keyword<struct key, small_type>>));
 
-  TTS_EXPECT( rbr::keyword_parameter<decltype(param             )> );
-  TTS_EXPECT( rbr::keyword_parameter<decltype("local"_kw = 6.34f)> );
-  TTS_EXPECT_NOT( rbr::keyword_parameter<decltype("local"_kw)> );
-  TTS_EXPECT_NOT( rbr::keyword_parameter<float**> );
+  // Predefined keyword object
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(custom_) > );
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(coord_ ) > );
+
+  // Type from polymorphic constructor
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(rbr::keyword("any"_id)) > );
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(rbr::keyword<small_type>("small"_id)) > );
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(rbr::keyword<float>("real_value"_id)) > );
+  TTS_EXPECT(   rbr::concepts::keyword< decltype(rbr::flag("modal"_id)) > );
+
+  // Type from literals
+  TTS_EXPECT(   rbr::concepts::keyword< decltype("any"_kw) > );
+  TTS_EXPECT(   rbr::concepts::keyword< decltype("modal"_fl) > );
+
+  // Obviously wrong type
+  TTS_EXPECT_NOT( rbr::concepts::keyword<float**> );
+};
+
+struct my_little_keyword : rbr::checked_keyword<struct key, small_type>
+{
+  using parent = rbr::checked_keyword<struct key, small_type>;
+  using parent::operator=;
+};
+
+TTS_CASE("Check rbr::concepts::option concept")
+{
+  TTS_EXPECT( (rbr::concepts::option<rbr::option<rbr::any_keyword<struct key> , int>>) );
+  TTS_EXPECT( (rbr::concepts::option<rbr::option<my_little_keyword            , int>>) );
+  TTS_EXPECT( (rbr::concepts::option<rbr::flag_keyword<struct key>                  >) );
+  TTS_EXPECT_NOT(rbr::concepts::option<float**> );
 };
 
 TTS_CASE("Check rbr::exactly concept")
@@ -28,7 +58,7 @@ TTS_CASE("Check rbr::exactly concept")
 
   auto param = (coord_ = 9);
 
-  TTS_EXPECT( (rbr::exactly<decltype(param)              , coord_    >) );
-  TTS_EXPECT( (rbr::exactly<decltype("local"_kw = 6.34f) , "local"_kw>) );
-  TTS_EXPECT_NOT( (rbr::exactly<decltype("local"_kw = 77), coord_    >) );
+  TTS_EXPECT( (rbr::concepts::exactly<decltype(param)              , coord_    >) );
+  TTS_EXPECT( (rbr::concepts::exactly<decltype("local"_kw = 6.34f) , "local"_kw>) );
+  TTS_EXPECT_NOT( (rbr::concepts::exactly<decltype("local"_kw = 77), coord_    >) );
 };
